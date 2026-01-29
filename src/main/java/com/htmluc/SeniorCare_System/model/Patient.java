@@ -6,14 +6,17 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-@Entity(name = "tbUser")
-public class User
+@Entity
+public class Patient
 {
     @Id
     private UUID id;
 
-    private String function;
-    private String password;
+    private char gender;
+    private String nationality;
+    private int degree_dependence;
+    private String source_income;
+    private String observations;
 
     @OneToOne
     @MapsId

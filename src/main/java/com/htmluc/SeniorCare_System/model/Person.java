@@ -10,7 +10,8 @@ import java.util.UUID;
 
 @Data
 @Entity(name = "tbPerson")
-public class Person {
+public class Person
+{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -28,4 +29,7 @@ public class Person {
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
     private User user;
+
+    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
+    private Patient patient;
 }
