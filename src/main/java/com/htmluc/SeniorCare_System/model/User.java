@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Entity(name = "tbUser")
+@Entity(name = "tb_user")
 public class User
 {
     @Id

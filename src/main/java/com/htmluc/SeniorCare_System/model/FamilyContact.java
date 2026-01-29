@@ -12,7 +12,7 @@ import jakarta.persistence.OneToOne;
 import lombok.Data;
 
 @Data
-@Entity(name="Family_Contact")
+@Entity(name="tb_family_contact")
 public class FamilyContact {
     
     @Id

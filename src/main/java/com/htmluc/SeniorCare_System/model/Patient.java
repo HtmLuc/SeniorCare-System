@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Entity
+@Entity(name = "tb_patient")
 public class Patient
 {
     @Id
@@ -24,10 +24,17 @@ public class Patient
     @JoinColumn(name = "person_id")
     private Person person;
 
-    @OneToMany(mappedBy = "patient")
-    private List<Bandage> bandage;
-
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    private List<Monitoring> monitorings;
+  
     @ManyToOne
     @JoinColumn(name = "familyContact")
     private FamilyContact familyContact;
+
+    @ManyToMany
+    @JoinTable(name = "tb_patient_medicine",
+            joinColumns = @JoinColumn(name = "patient_id"),
+            inverseJoinColumns = @JoinColumn(name = "medicine_id")
+    )
+    private List<Medicine> medicines;
 }
