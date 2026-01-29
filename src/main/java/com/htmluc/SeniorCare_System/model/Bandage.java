@@ -1,6 +1,7 @@
 package com.htmluc.SeniorCare_System.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -13,16 +14,15 @@ import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Data
-@Entity
-public class Bandage {
+@Entity(name = "tb_bandage")
+public class Bandage
+{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
-    @CreationTimestamp
     private LocalDateTime medicationTime;
-
     private String bandageType;
     private String exudateQuantity;
     private String exudateType;

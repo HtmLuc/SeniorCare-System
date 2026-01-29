@@ -25,10 +25,13 @@ public class Patient
     private Person person;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    private List<Bandage> bandages;
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     private List<Monitoring> monitorings;
   
     @ManyToOne
-    @JoinColumn(name = "familyContact")
+    @JoinColumn(name = "family_contact_id")
     private FamilyContact familyContact;
 
     @ManyToMany
