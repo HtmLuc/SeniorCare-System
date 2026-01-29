@@ -22,4 +22,8 @@ public class Patient
     @MapsId
     @JoinColumn(name = "person_id")
     private Person person;
+
+    @ManyToOne
+    @JoinColumn(name = "familyContact")
+    private FamilyContact familyContact;
 }

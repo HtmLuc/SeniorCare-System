@@ -31,7 +31,7 @@ public class FamilyContact {
     private String road;
     private String houseNumber;
 
-    @OneToMany(mappedBy = "Patient")
+    @OneToMany(mappedBy = "familyContact")
     private List<Patient> patient;
 
 }
