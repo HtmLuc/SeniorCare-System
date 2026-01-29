@@ -26,6 +26,10 @@ public class Patient
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     private List<Monitoring> monitorings;
+  
+    @ManyToOne
+    @JoinColumn(name = "familyContact")
+    private FamilyContact familyContact;
 
     @ManyToMany
     @JoinTable(name = "tb_patient_medicine",
