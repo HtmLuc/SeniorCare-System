@@ -1,15 +1,15 @@
 package com.htmluc.SeniorCare_System.model;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data
-@Table(name="Family_Contact")
+@Entity(name="Family_Contact")
 public class FamilyContact {
     
     @Id
@@ -27,5 +27,6 @@ public class FamilyContact {
     private String neighborhood;
     private String road;
     private String houseNumber;
+
 
 }
