@@ -9,9 +9,9 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data
-@Table(name="Family_Contact")
-public class FamilyContact {
-    
+@Table(name = "tb_family_contact")
+public class FamilyContact
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,5 +27,4 @@ public class FamilyContact {
     private String neighborhood;
     private String road;
     private String houseNumber;
-
 }
