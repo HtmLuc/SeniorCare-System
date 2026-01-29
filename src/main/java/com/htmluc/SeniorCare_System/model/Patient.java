@@ -3,6 +3,7 @@ package com.htmluc.SeniorCare_System.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -22,4 +23,7 @@ public class Patient
     @MapsId
     @JoinColumn(name = "person_id")
     private Person person;
+
+    @OneToMany(mappedBy = "medicine")
+    private List<Medicine> medicines;
 }
