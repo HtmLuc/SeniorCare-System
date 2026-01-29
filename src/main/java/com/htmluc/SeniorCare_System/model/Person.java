@@ -1,10 +1,8 @@
 package com.htmluc.SeniorCare_System.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,16 +12,20 @@ import java.util.UUID;
 @Entity(name = "tbPerson")
 public class Person {
     @Id
-    @GeneratedValue(generator = "UUID")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true)
-    private int cpf;
+    @Column(unique = true, nullable = false, length = 11)
+    private String cpf;
 
     private String name;
     private LocalDate dateBirth;
     private String email;
-    private int phoneNumber;
+    private String phoneNumber;
 
+    @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
+    private User user;
 }
