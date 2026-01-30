@@ -19,9 +19,16 @@ public class PersonModel
     @Column(unique = true, nullable = false, length = 11)
     private String cpf;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private LocalDate dateBirth;
+
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String phoneNumber;
 
     @CreationTimestamp

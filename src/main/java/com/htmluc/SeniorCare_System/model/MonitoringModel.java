@@ -1,9 +1,6 @@
 package com.htmluc.SeniorCare_System.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -17,13 +14,28 @@ public class MonitoringModel
     @Id
     private UUID id;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private LocalDateTime timeMeasure;
+
+    @Column(nullable = false)
     private String bloodPressure;
+
+    @Column(nullable = false)
     private String heartRate;
+
+    @Column(nullable = false)
     private String respiratoryRate;
+
+    @Column(nullable = false)
     private String saturation;
+
+    @Column(nullable = false)
     private String temperature;
+
+    @Column(nullable = false)
     private String bloodSugar;
 
     @CreationTimestamp

@@ -13,10 +13,18 @@ public class PatientModel
     @Id
     private UUID id;
 
+    @Column(nullable = false)
     private char gender;
+
+    @Column(nullable = false)
     private String nationality;
+
+    @Column(nullable = false)
     private int degree_dependence;
+
+    @Column(nullable = false)
     private String source_income;
+
     private String observations;
 
     @OneToOne

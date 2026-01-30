@@ -13,13 +13,25 @@ public class FamilyContactModel
     @Id
     private UUID id;
 
-
+    @Column(nullable = false)
     private String relationship;
+
+    @Column(nullable = false)
     private String cep;
+
+    @Column(nullable = false)
     private String uf;
+
+    @Column(nullable = false)
     private String city;
+
+    @Column(nullable = false)
     private String neighborhood;
+
+    @Column(nullable = false)
     private String road;
+
+    @Column(nullable = false)
     private String houseNumber;
 
     @OneToOne

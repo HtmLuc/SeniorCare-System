@@ -3,14 +3,9 @@ package com.htmluc.SeniorCare_System.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Data
@@ -21,13 +16,28 @@ public class BandageModel
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false)
     private LocalDateTime medicationTime;
+
+    @Column(nullable = false)
     private String bandageType;
+
+    @Column(nullable = false)
     private String exudateQuantity;
+
+    @Column(nullable = false)
     private String exudateType;
+
+    @Column(nullable = false)
     private String edges;
+
+    @Column(nullable = false)
     private String bed;
+
+    @Column(nullable = false)
     private String cleaningSupplies;
+
+    @Column(nullable = false)
     private String coverage;
 
     @CreationTimestamp
