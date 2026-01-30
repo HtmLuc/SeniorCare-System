@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.Data;
@@ -16,28 +17,28 @@ public class BandageModel
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @NotBlank
     private LocalDateTime medicationTime;
 
-    @Column(nullable = false)
+    @NotBlank
     private String bandageType;
 
-    @Column(nullable = false)
+    @NotBlank
     private String exudateQuantity;
 
-    @Column(nullable = false)
+    @NotBlank
     private String exudateType;
 
-    @Column(nullable = false)
+    @NotBlank
     private String edges;
 
-    @Column(nullable = false)
+    @NotBlank
     private String bed;
 
-    @Column(nullable = false)
+    @NotBlank
     private String cleaningSupplies;
 
-    @Column(nullable = false)
+    @NotBlank
     private String coverage;
 
     @CreationTimestamp

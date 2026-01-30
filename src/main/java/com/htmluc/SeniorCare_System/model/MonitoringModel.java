@@ -1,6 +1,7 @@
 package com.htmluc.SeniorCare_System.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -14,28 +15,28 @@ public class MonitoringModel
     @Id
     private UUID id;
 
-    @Column(nullable = false)
+    @NotBlank
     private String name;
 
-    @Column(nullable = false)
+    @NotBlank
     private LocalDateTime timeMeasure;
 
-    @Column(nullable = false)
+    @NotBlank
     private String bloodPressure;
 
-    @Column(nullable = false)
+    @NotBlank
     private String heartRate;
 
-    @Column(nullable = false)
+    @NotBlank
     private String respiratoryRate;
 
-    @Column(nullable = false)
+    @NotBlank
     private String saturation;
 
-    @Column(nullable = false)
+    @NotBlank
     private String temperature;
 
-    @Column(nullable = false)
+    @NotBlank
     private String bloodSugar;
 
     @CreationTimestamp

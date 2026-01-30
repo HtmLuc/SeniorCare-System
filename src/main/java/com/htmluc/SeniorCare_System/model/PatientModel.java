@@ -1,6 +1,7 @@
 package com.htmluc.SeniorCare_System.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.util.List;
@@ -13,16 +14,16 @@ public class PatientModel
     @Id
     private UUID id;
 
-    @Column(nullable = false)
+    @NotBlank
     private char gender;
 
-    @Column(nullable = false)
+    @NotBlank
     private String nationality;
 
-    @Column(nullable = false)
+    @NotBlank
     private int degree_dependence;
 
-    @Column(nullable = false)
+    @NotBlank
     private String source_income;
 
     private String observations;
