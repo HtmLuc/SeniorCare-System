@@ -2,6 +2,8 @@ package com.htmluc.SeniorCare_System.controller;
 
 import com.htmluc.SeniorCare_System.model.UserModel;
 import com.htmluc.SeniorCare_System.repository.UserRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +19,7 @@ public class UserController
     private UserRepository userRepository;
 
     @PostMapping
-    public ResponseEntity create(@RequestBody UserModel userModel)
+    public ResponseEntity create(@RequestBody @Valid UserModel userModel)
     {
         try
         {

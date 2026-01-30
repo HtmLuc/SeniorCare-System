@@ -1,6 +1,7 @@
 package com.htmluc.SeniorCare_System.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.util.List;
@@ -13,10 +14,10 @@ public class UserModel
     @Id
     private UUID id;
 
-    @Column(nullable = false)
+    @NotBlank
     private String function;
 
-    @Column(nullable = false)
+    @NotBlank
     private String password;
 
     @OneToOne

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
@@ -13,25 +14,25 @@ public class FamilyContactModel
     @Id
     private UUID id;
 
-    @Column(nullable = false)
+    @NotBlank
     private String relationship;
 
-    @Column(nullable = false)
+    @NotBlank
     private String cep;
 
-    @Column(nullable = false)
+    @NotBlank
     private String uf;
 
-    @Column(nullable = false)
+    @NotBlank
     private String city;
 
-    @Column(nullable = false)
+    @NotBlank
     private String neighborhood;
 
-    @Column(nullable = false)
+    @NotBlank
     private String road;
 
-    @Column(nullable = false)
+    @NotBlank
     private String houseNumber;
 
     @OneToOne

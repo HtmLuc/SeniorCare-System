@@ -1,6 +1,7 @@
 package com.htmluc.SeniorCare_System.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -15,16 +16,16 @@ public class MedicineModel
     @Id
     private UUID id;
 
-    @Column(nullable = false)
+    @NotBlank
     private String name;
 
-    @Column(nullable = false)
+    @NotBlank
     private String dosage;
 
-    @Column(nullable = false)
+    @NotBlank
     private String frequency;
 
-    @Column(nullable = false)
+    @NotBlank
     private String acquisition;
 
     @CreationTimestamp
