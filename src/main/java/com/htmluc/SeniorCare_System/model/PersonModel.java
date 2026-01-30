@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Data
 @Entity(name = "tb_person")
-public class Person
+public class PersonModel
 {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -28,11 +28,11 @@ public class Person
     private LocalDateTime createdAt;
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
-    private User user;
+    private UserModel user;
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
-    private Patient patient;
+    private PatientModel patient;
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
-    private FamilyContact familyContact;
+    private FamilyContactModel familyContact;
 }

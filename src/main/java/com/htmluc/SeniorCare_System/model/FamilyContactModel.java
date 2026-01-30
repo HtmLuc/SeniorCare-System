@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Entity(name = "tb_family_contact")
-public class FamilyContact
+public class FamilyContactModel
 {
     @Id
     private UUID id;
@@ -25,8 +25,8 @@ public class FamilyContact
     @OneToOne
     @MapsId
     @JoinColumn(name = "id_person")
-    private Person person;
+    private PersonModel person;
 
     @OneToMany(mappedBy = "familyContact")
-    private List<Patient> patient;
+    private List<PatientModel> patient;
 }

@@ -15,7 +15,7 @@ import lombok.Data;
 
 @Data
 @Entity(name = "tb_bandage")
-public class Bandage
+public class BandageModel
 {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,9 +35,9 @@ public class Bandage
 
     @ManyToOne
     @JoinColumn(name = "patient_id")
-    private Patient patient;
+    private PatientModel patient;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserModel user;
 }

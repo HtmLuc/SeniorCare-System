@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Data
 @Entity(name = "tb_monitoring")
-public class Monitoring
+public class MonitoringModel
 {
     @Id
     private UUID id;
@@ -31,5 +31,5 @@ public class Monitoring
 
     @ManyToOne
     @JoinColumn(name = "patient_id")
-    private Patient patient;
+    private PatientModel patient;
 }

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @Entity(name = "tb_user")
-public class User
+public class UserModel
 {
     @Id
     private UUID id;
@@ -19,8 +19,8 @@ public class User
     @OneToOne
     @MapsId
     @JoinColumn(name = "person_id")
-    private Person person;
+    private PersonModel person;
 
     @OneToMany(mappedBy = "user")
-    private List<Bandage> bandage;
+    private List<BandageModel> bandage;
 }

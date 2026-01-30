@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @Entity(name = "tb_patient")
-public class Patient
+public class PatientModel
 {
     @Id
     private UUID id;
@@ -22,22 +22,22 @@ public class Patient
     @OneToOne
     @MapsId
     @JoinColumn(name = "person_id")
-    private Person person;
+    private PersonModel person;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    private List<Bandage> bandages;
+    private List<BandageModel> bandage;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    private List<Monitoring> monitorings;
+    private List<MonitoringModel> monitorings;
   
     @ManyToOne
     @JoinColumn(name = "family_contact_id")
-    private FamilyContact familyContact;
+    private FamilyContactModel familyContact;
 
     @ManyToMany
     @JoinTable(name = "tb_patient_medicine",
             joinColumns = @JoinColumn(name = "patient_id"),
             inverseJoinColumns = @JoinColumn(name = "medicine_id")
     )
-    private List<Medicine> medicines;
+    private List<MedicineModel> medicines;
 }
