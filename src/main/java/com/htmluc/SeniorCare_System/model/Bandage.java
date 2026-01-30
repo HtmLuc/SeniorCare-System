@@ -17,9 +17,8 @@ import lombok.Data;
 @Entity(name = "tb_bandage")
 public class Bandage
 {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private LocalDateTime medicationTime;

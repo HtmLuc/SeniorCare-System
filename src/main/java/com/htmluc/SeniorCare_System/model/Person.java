@@ -32,4 +32,7 @@ public class Person
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
     private Patient patient;
+
+    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
+    private FamilyContact familyContact;
 }
