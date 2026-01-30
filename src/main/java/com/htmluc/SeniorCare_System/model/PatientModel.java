@@ -14,7 +14,6 @@ public class PatientModel
     @Id
     private UUID id;
 
-    @NotBlank
     private char gender;
 
     @NotBlank

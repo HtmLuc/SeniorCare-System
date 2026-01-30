@@ -1,5 +1,6 @@
 package com.htmluc.SeniorCare_System.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -24,7 +25,6 @@ public class PersonModel
     @NotBlank
     private String name;
 
-    @NotBlank
     private LocalDate dateBirth;
 
     @NotBlank
@@ -38,6 +38,7 @@ public class PersonModel
     private LocalDateTime createdAt;
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
+    @JsonIgnore
     private UserModel user;
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)

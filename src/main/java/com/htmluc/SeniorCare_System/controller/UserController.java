@@ -7,11 +7,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/user")
@@ -21,25 +22,40 @@ public class UserController
     @Autowired
     private UserRepository userRepository;
 
+    @GetMapping
+    public ResponseEntity<List<UserModel>> listAlll()
+    {
+        try
+        {
+            List<UserModel> users = this.userRepository.findAll();
+            return ResponseEntity.ok(users);
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @PostMapping
     @Operation(summary = "Save user data", description = "Method for saving user data.", deprecated = false)
     @ApiResponse(responseCode = "201", description = "User created successfully")
     @ApiResponse(responseCode = "400", description = "user already exists")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity create(@RequestBody @Valid UserModel userModel)
+    public ResponseEntity<UserModel> create(@RequestBody @Valid UserModel userModel)
     {
         try
         {
-            var user = this.userRepository.findById(userModel.getId());
             if(userModel.getId() != null && this.userRepository.existsById(userModel.getId()))
             {
-                throw new IllegalArgumentException("User already exists");
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
             }
-            this.userRepository.save(userModel);
-            return ResponseEntity.ok().build();
+            var user = this.userRepository.save(userModel);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(user);
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }

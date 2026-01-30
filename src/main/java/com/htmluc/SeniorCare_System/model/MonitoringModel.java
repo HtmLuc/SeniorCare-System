@@ -18,7 +18,6 @@ public class MonitoringModel
     @NotBlank
     private String name;
 
-    @NotBlank
     private LocalDateTime timeMeasure;
 
     @NotBlank
