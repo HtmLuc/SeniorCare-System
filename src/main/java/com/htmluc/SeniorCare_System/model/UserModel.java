@@ -13,12 +13,15 @@ public class UserModel
     @Id
     private UUID id;
 
+    @Column(nullable = false)
     private String function;
+
+    @Column(nullable = false)
     private String password;
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", nullable = false)
     private PersonModel person;
 
     @OneToMany(mappedBy = "user")

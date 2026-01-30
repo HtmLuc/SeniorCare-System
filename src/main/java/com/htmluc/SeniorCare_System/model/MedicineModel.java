@@ -15,9 +15,16 @@ public class MedicineModel
     @Id
     private UUID id;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String dosage;
+
+    @Column(nullable = false)
     private String frequency;
+
+    @Column(nullable = false)
     private String acquisition;
 
     @CreationTimestamp
