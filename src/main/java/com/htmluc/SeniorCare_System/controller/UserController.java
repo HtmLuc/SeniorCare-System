@@ -23,6 +23,10 @@ public class UserController
     private UserRepository userRepository;
 
     @GetMapping
+    @Operation(summary = "List all users", description = "Retrieves a comprehensive list of all registered users from the database.", deprecated = false)
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of users")
+    @ApiResponse(responseCode = "400", description = "Successfully retrieved the list of users")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<List<UserModel>> listAlll()
     {
         try
@@ -32,6 +36,7 @@ public class UserController
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
@@ -39,7 +44,7 @@ public class UserController
     @PostMapping
     @Operation(summary = "Save user data", description = "Method for saving user data.", deprecated = false)
     @ApiResponse(responseCode = "201", description = "User created successfully")
-    @ApiResponse(responseCode = "400", description = "user already exists")
+    @ApiResponse(responseCode = "400", description = "User already exists")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<UserModel> create(@RequestBody @Valid UserModel userModel)
     {
