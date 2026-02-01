@@ -11,12 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/user")
-@Tag(name = "User", description = "User Controller for managing endpoints for creation, retrieval, and updates user data.")
+@RequestMapping("/v1/users")
+@Tag(name = "User", description = "Endpoints for managing user data")
 public class UserController
 {
     @Autowired
@@ -25,43 +25,32 @@ public class UserController
     @GetMapping
     @Operation(summary = "List all users", description = "Retrieves a comprehensive list of all registered users from the database.", deprecated = false)
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of users")
-    @ApiResponse(responseCode = "400", description = "Successfully retrieved the list of users")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<List<UserModel>> listAlll()
+    public ResponseEntity<List<UserModel>> listAll()
     {
-        try
-        {
-            List<UserModel> users = this.userRepository.findAll();
-            return ResponseEntity.ok(users);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(this.userRepository.findAll());
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get user by ID", description = "Retrieves a user by its unique identifier")
+    @ApiResponse(responseCode = "200", description = "User retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "User not found")
+    public ResponseEntity<UserModel> getById(@PathVariable UUID id)
+    {
+        return userRepository.findById(id).map(user -> ResponseEntity.ok(user)).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     @Operation(summary = "Save user data", description = "Method for saving user data.", deprecated = false)
     @ApiResponse(responseCode = "201", description = "User created successfully")
-    @ApiResponse(responseCode = "400", description = "User already exists")
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "409", description = "User already exists")
     public ResponseEntity<UserModel> create(@RequestBody @Valid UserModel userModel)
     {
-        try
+        if(userModel.getId()!=null&&this.userRepository.existsById(userModel.getId()))
         {
-            if(userModel.getId() != null && this.userRepository.existsById(userModel.getId()))
-            {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
-            }
-            var user = this.userRepository.save(userModel);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(user);
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        UserModel user = this.userRepository.save(userModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 }
