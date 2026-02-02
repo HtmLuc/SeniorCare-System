@@ -6,14 +6,13 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @Entity(name = "tb_monitoring")
 public class MonitoringModel
 {
     @Id
-    private UUID id;
+    private Long id;
 
     @NotBlank
     private String name;

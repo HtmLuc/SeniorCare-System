@@ -5,14 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Entity(name = "tb_patient")
 public class PatientModel
 {
     @Id
-    private UUID id;
+    private Long id;
 
     private char gender;
 

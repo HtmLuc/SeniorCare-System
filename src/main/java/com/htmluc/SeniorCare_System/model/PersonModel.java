@@ -9,7 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @Entity(name = "tb_person")
@@ -17,7 +16,7 @@ public class PersonModel
 {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private Long id;
 
     @Column(unique = true, nullable = false, length = 11)
     private String cpf;

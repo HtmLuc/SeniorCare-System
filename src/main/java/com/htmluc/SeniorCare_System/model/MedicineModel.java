@@ -7,14 +7,13 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Entity(name = "tb_medicine")
 public class MedicineModel
 {
     @Id
-    private UUID id;
+    private Long id;
 
     @NotBlank
     private String name;

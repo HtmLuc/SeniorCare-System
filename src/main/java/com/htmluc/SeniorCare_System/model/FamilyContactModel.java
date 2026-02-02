@@ -1,7 +1,6 @@
 package com.htmluc.SeniorCare_System.model;
 
 import java.util.List;
-import java.util.UUID;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -12,7 +11,7 @@ import lombok.Data;
 public class FamilyContactModel
 {
     @Id
-    private UUID id;
+    private Long id;
 
     @NotBlank
     private String relationship;

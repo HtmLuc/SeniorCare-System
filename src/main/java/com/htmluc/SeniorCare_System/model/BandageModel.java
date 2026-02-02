@@ -1,7 +1,6 @@
 package com.htmluc.SeniorCare_System.model;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -14,8 +13,8 @@ import lombok.Data;
 public class BandageModel
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.Long)
+    private Long id;
 
     @NotBlank
     private LocalDateTime medicationTime;

@@ -5,14 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Entity(name = "tb_user")
 public class UserModel
 {
     @Id
-    private UUID id;
+    private Long id;
 
     @NotBlank
     private String function;
