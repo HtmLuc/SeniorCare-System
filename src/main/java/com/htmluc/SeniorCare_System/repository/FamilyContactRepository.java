@@ -8,4 +8,4 @@ import java.util.UUID;
 
 public interface FamilyContactRepository extends JpaRepository<FamilyContactModel, Long> {
    Optional<FamilyContactModel> findByPatient_Id(UUID patientId);
-} 
+}

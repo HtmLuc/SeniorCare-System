@@ -62,4 +62,17 @@ public class PatientController
 
         return ResponseEntity.status(HttpStatus.CREATED).body(patient);
     }
+
+    @DeleteMapping("{id}")
+    @Operation(summary = "Delete patient data", description = "Method for delete patient data.", deprecated = false)
+    @ApiResponse(responseCode = "204", description = "Patient deleted successfully")
+    @ApiResponse(responseCode = "404", description = "Patient not found")
+    public ResponseEntity<Void> delete(@PathVariable Long id)
+    {
+        if (!this.patientRepository.existsById(id))
+        {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
+    }
 }
