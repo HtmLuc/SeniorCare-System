@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -35,7 +34,7 @@ public class UserController
     @Operation(summary = "Get user by ID", description = "Retrieves a user by its unique identifier")
     @ApiResponse(responseCode = "200", description = "User retrieved successfully")
     @ApiResponse(responseCode = "404", description = "User not found")
-    public ResponseEntity<UserModel> getById(@PathVariable UUID id)
+    public ResponseEntity<UserModel> getById(@PathVariable Long id)
     {
         return userRepository.findById(id).map(user -> ResponseEntity.ok(user)).orElse(ResponseEntity.notFound().build());
     }
@@ -46,11 +45,21 @@ public class UserController
     @ApiResponse(responseCode = "409", description = "User already exists")
     public ResponseEntity<UserModel> create(@RequestBody @Valid UserModel userModel)
     {
-        if(userModel.getId()!=null&&this.userRepository.existsById(userModel.getId()))
-        {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        userModel.setId(null);
         UserModel user = this.userRepository.save(userModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete user data", description = "Method for delete user data.", deprecated = false)
+    @ApiResponse(responseCode = "204", description = "User deleted successfully")
+    @ApiResponse(responseCode = "404", description = "User not found")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if(!this.userRepository.existsById(id))
+        {
+            return ResponseEntity.notFound().build();
+        }
+        this.userRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
