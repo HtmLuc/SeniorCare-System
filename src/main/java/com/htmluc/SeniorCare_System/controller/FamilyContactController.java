@@ -48,10 +48,6 @@ public class FamilyContactController
     @ApiResponse(responseCode = "400", description = "Invalid input data")
     public ResponseEntity<FamilyContactModel> criar(@RequestBody FamilyContactModel familyContactModel) {
         
-        if (familyContactModel.getId() == null) {
-            familyContactModel.setId(UUID.randomUUID());
-        }
-        
         FamilyContactModel savedContact = familyContactRepository.save(familyContactModel);
         
         return ResponseEntity.status(HttpStatus.CREATED).body(savedContact);

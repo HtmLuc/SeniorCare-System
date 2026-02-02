@@ -19,7 +19,7 @@ public class UserModel
     @NotBlank
     private String password;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "person_id", nullable = false)
     private PersonModel person;

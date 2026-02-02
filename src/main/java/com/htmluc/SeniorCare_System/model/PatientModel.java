@@ -18,7 +18,6 @@ public class PatientModel
     @NotBlank
     private String nationality;
 
-    @NotBlank
     private int degree_dependence;
 
     @NotBlank
@@ -26,7 +25,7 @@ public class PatientModel
 
     private String observations;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "person_id")
     private PersonModel person;

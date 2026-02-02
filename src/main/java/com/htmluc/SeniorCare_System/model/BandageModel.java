@@ -13,10 +13,9 @@ import lombok.Data;
 public class BandageModel
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.Long)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     private LocalDateTime medicationTime;
 
     @NotBlank
