@@ -18,8 +18,6 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/v1/familyContact")
 @Tag(name = "FamilyContact", description = "Endpoints for managing familyContact data")
@@ -35,8 +33,8 @@ public class FamilyContactController
 
     public ResponseEntity<FamilyContactModel> getFamilyContactByPatientId(
         @Parameter(description = "patient ID", required = true) 
-        @PathVariable UUID idPatient){
-        return familyContactRepository.findByPatient_Id(idPatient)
+        @PathVariable Long idPatient){
+        return familyContactRepository.findById(idPatient)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
     } 
@@ -47,10 +45,6 @@ public class FamilyContactController
     @ApiResponse(responseCode = "201", description = "Family contact created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid input data")
     public ResponseEntity<FamilyContactModel> criar(@RequestBody FamilyContactModel familyContactModel) {
-        
-        if (familyContactModel.getId() == null) {
-            familyContactModel.setId(UUID.randomUUID());
-        }
         
         FamilyContactModel savedContact = familyContactRepository.save(familyContactModel);
         

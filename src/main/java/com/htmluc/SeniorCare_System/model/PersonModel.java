@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class PersonModel
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true, nullable = false, length = 11)
@@ -36,13 +36,13 @@ public class PersonModel
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
+    @OneToOne
     @JsonIgnore
     private UserModel user;
 
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
+    @OneToOne
     private PatientModel patient;
 
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
+    @OneToOne
     private FamilyContactModel familyContact;
 }

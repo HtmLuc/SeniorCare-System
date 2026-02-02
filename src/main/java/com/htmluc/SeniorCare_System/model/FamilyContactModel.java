@@ -34,7 +34,7 @@ public class FamilyContactModel
     @NotBlank
     private String houseNumber;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "id_person")
     private PersonModel person;

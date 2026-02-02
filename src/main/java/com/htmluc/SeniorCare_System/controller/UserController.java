@@ -27,7 +27,12 @@ public class UserController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<List<UserModel>> listAll()
     {
-        return ResponseEntity.ok(this.userRepository.findAll());
+        List<UserModel> allUsers = this.userRepository.findAll();
+        if (allUsers.isEmpty())
+        {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(allUsers);
     }
 
     @GetMapping("/{id}")
