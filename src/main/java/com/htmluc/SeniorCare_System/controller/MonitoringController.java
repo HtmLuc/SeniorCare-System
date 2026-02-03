@@ -86,4 +86,19 @@ public class MonitoringController
             return ResponseEntity.status(HttpStatus.CREATED).body(monitoring);
         }).orElse(ResponseEntity.badRequest().build());
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete monitoring data by ID", description = "Method for delete monitoring data")
+    @ApiResponse(responseCode = "204", description = "Monitoring deleted successfully")
+    @ApiResponse(responseCode = "404", description = "Monitoring not found")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<Void> delete(@PathVariable Long id)
+    {
+        if (!this.monitoringRepository.existsById(id))
+        {
+            return ResponseEntity.notFound().build();
+        }
+        this.monitoringRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
