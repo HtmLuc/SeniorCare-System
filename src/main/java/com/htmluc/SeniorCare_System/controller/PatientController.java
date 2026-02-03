@@ -73,6 +73,7 @@ public class PatientController
         {
             return ResponseEntity.notFound().build();
         }
+        this.patientRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
