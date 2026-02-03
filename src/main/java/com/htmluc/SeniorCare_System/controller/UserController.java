@@ -24,6 +24,7 @@ public class UserController
     @GetMapping
     @Operation(summary = "List all users", description = "Retrieves a comprehensive list of all registered users from the database.", deprecated = false)
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of users")
+    @ApiResponse(responseCode = "204", description = "No user found in the database")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<List<UserModel>> listAll()
     {
@@ -39,6 +40,7 @@ public class UserController
     @Operation(summary = "Get user by ID", description = "Retrieves a user by its unique identifier")
     @ApiResponse(responseCode = "200", description = "User retrieved successfully")
     @ApiResponse(responseCode = "404", description = "User not found")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<UserModel> getById(@PathVariable Long id)
     {
         return userRepository.findById(id).map(user -> ResponseEntity.ok(user)).orElse(ResponseEntity.notFound().build());
@@ -48,6 +50,7 @@ public class UserController
     @Operation(summary = "Save user data", description = "Method for saving user data.", deprecated = false)
     @ApiResponse(responseCode = "201", description = "User created successfully")
     @ApiResponse(responseCode = "409", description = "User already exists")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<UserModel> create(@RequestBody @Valid UserModel userModel)
     {
         userModel.setId(null);
@@ -59,6 +62,7 @@ public class UserController
     @Operation(summary = "Delete user data", description = "Method for delete user data.", deprecated = false)
     @ApiResponse(responseCode = "204", description = "User deleted successfully")
     @ApiResponse(responseCode = "404", description = "User not found")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         if(!this.userRepository.existsById(id))
         {
