@@ -31,9 +31,6 @@ public class PatientModel
     private PersonModel person;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    private List<BandageModel> bandage;
-
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     private List<MonitoringModel> monitorings;
   
     @ManyToOne
