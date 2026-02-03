@@ -71,8 +71,7 @@ public class FamilyContactController
     }
 
     @PostMapping
-    @Operation(summary = "Create a new family contact",
-            description = "Creates a new family contact with the provided data")
+    @Operation(summary = "Create a new family contact", description = "Creates a new family contact with the provided data")
     @ApiResponse(responseCode = "201", description = "Family contact created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")

@@ -3,20 +3,25 @@ package com.htmluc.SeniorCare_System.controller;
 import com.htmluc.SeniorCare_System.model.MedicineModel;
 import com.htmluc.SeniorCare_System.model.MonitoringModel;
 import com.htmluc.SeniorCare_System.repository.MedicineRepository;
+import com.htmluc.SeniorCare_System.repository.PatientRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/v1/medicines")
 public class MedicineController
 {
     @Autowired
     private MedicineRepository medicineRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
 
     @GetMapping
     @Operation(summary = "List all medicines", description = "Retrieves a comprehensive list of all registered medicines from the database.")
@@ -62,5 +67,16 @@ public class MedicineController
             MedicineModel medicine = this.medicineRepository.save(info);
             return ResponseEntity.ok(medicine);
         }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    @Operation(summary = "Create a new medicine for a patient", description = "Creates a new medicine record associated with a specific patient")
+    @ApiResponse(responseCode = "201", description = "Medicine created successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<MedicineModel> create(@RequestBody MedicineModel medicineModel)
+    {
+        MedicineModel medicine = this.medicineRepository.save(medicineModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(medicine);
     }
 }
