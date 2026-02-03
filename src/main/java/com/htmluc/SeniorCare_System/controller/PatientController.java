@@ -1,7 +1,8 @@
 package com.htmluc.SeniorCare_System.controller;
 
-import com.htmluc.SeniorCare_System.model.FamilyContactModel;
+import com.htmluc.SeniorCare_System.model.MedicineModel;
 import com.htmluc.SeniorCare_System.model.PatientModel;
+import com.htmluc.SeniorCare_System.repository.MedicineRepository;
 import com.htmluc.SeniorCare_System.repository.PatientRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,6 +21,9 @@ public class PatientController
 {
     @Autowired
     private PatientRepository patientRepository;
+
+    @Autowired
+    private MedicineRepository medicineRepository;
 
     @GetMapping
     @Operation(summary = "List all patients", description = "Retrieves a comprehensive list of all registered patients from the database.", deprecated = false)
@@ -82,10 +86,26 @@ public class PatientController
         return ResponseEntity.status(HttpStatus.CREATED).body(patient);
     }
 
-    @DeleteMapping("{id}")
+    @PostMapping("/{id}/medicines")
+    @Operation(summary = "Create a new medicine for a patient", description = "Creates a new medicine record associated with a specific patient")
+    @ApiResponse(responseCode = "201", description = "Medicine created successfully")
+    @ApiResponse(responseCode = "404", description = "Patient not found")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<MedicineModel> createByPatient(@PathVariable Long id, @RequestBody MedicineModel medicineModel)
+    {
+        return this.patientRepository.findById(id).map(patient -> {
+            MedicineModel medicine = this.medicineRepository.save(medicineModel);
+            patient.getMedicines().add(medicine);
+            patientRepository.save(patient);
+            return ResponseEntity.status(HttpStatus.CREATED).body(medicine);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
     @Operation(summary = "Delete patient data", description = "Method for delete patient data.", deprecated = false)
     @ApiResponse(responseCode = "204", description = "Patient deleted successfully")
     @ApiResponse(responseCode = "404", description = "Patient not found")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Void> delete(@PathVariable Long id)
     {
         if (!this.patientRepository.existsById(id))
