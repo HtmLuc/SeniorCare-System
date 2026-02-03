@@ -19,6 +19,8 @@ public class MonitoringController
     @Autowired
     private MonitoringRepository monitoringRepository;
 
+    @Autowired
+    private PatientRepository patientRepository;
 
     @GetMapping
     @Operation(summary = "List all monitoring", description = "Retrieves a comprehensive list of all registered monitoring from the database.")
@@ -68,5 +70,20 @@ public class MonitoringController
             MonitoringModel monitoring = this.monitoringRepository.save(info);
             return ResponseEntity.ok(monitoring);
         }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/patient/{id}")
+    @Operation(summary = "Create a new monitoring for a patient", description = "Creates a new monitoring record associated with a specific patient")
+    @ApiResponse(responseCode = "201", description = "Monitoring created successfully")
+    @ApiResponse(responseCode = "404", description = "Patient not found")
+    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<MonitoringModel> create(@PathVariable Long id, @RequestBody MonitoringModel monitoringModel)
+    {
+        return this.patientRepository.findById(id).map(patient -> {
+            monitoringModel.setPatient(patient);
+            MonitoringModel monitoring = this.monitoringRepository.save(monitoringModel);
+            return ResponseEntity.status(HttpStatus.CREATED).body(monitoring);
+        }).orElse(ResponseEntity.badRequest().build());
     }
 }
