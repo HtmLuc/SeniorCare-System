@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface FamilyContactRepository extends JpaRepository<FamilyContactModel, Long>
 {
-    Optional<FamilyContactModel> findByPersonId(Long id);
+    Optional<FamilyContactModel> findByPatientId(Long id);
 }
