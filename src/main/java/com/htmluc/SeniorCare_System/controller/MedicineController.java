@@ -1,15 +1,13 @@
 package com.htmluc.SeniorCare_System.controller;
 
 import com.htmluc.SeniorCare_System.model.MedicineModel;
+import com.htmluc.SeniorCare_System.model.MonitoringModel;
 import com.htmluc.SeniorCare_System.repository.MedicineRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -45,5 +43,24 @@ public class MedicineController
     public ResponseEntity<MedicineModel> getById(@PathVariable Long id)
     {
         return this.medicineRepository.findById(id).map(medicine -> ResponseEntity.ok(medicine)).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update medicine by ID", description = "Updates an existing medicine with the provided data")
+    @ApiResponse(responseCode = "200", description = "Medicine updated successfully")
+    @ApiResponse(responseCode = "404", description = "Medicine not found")
+    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<MedicineModel> updateById(@PathVariable Long id, @RequestBody MedicineModel medicineModel)
+    {
+        return this.medicineRepository.findById(id).map(info -> {
+            info.setName(medicineModel.getName());
+            info.setAcquisition(medicineModel.getAcquisition());
+            info.setDosage(medicineModel.getDosage());
+            info.setFrequency(medicineModel.getFrequency());
+
+            MedicineModel medicine = this.medicineRepository.save(info);
+            return ResponseEntity.ok(medicine);
+        }).orElse(ResponseEntity.notFound().build());
     }
 }
