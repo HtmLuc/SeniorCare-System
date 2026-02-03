@@ -13,6 +13,7 @@ import java.util.List;
 public class MedicineModel
 {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
