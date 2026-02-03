@@ -1,5 +1,6 @@
 package com.htmluc.SeniorCare_System.controller;
 
+import com.htmluc.SeniorCare_System.model.FamilyContactModel;
 import com.htmluc.SeniorCare_System.model.PatientModel;
 import com.htmluc.SeniorCare_System.repository.PatientRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,6 +44,24 @@ public class PatientController
     public ResponseEntity<PatientModel> getById(@PathVariable Long id)
     {
         return this.patientRepository.findById(id).map(patient -> ResponseEntity.ok(patient)).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update patient by ID", description = "Updates an existing patient with the provided data")
+    @ApiResponse(responseCode = "200", description = "Patient updated successfully")
+    @ApiResponse(responseCode = "404", description = "Patient not found")
+    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<PatientModel> updateById(@PathVariable Long id, @RequestBody PatientModel patientModel)
+    {
+        return this.patientRepository.findById(id).map(info -> {
+            info.setGender(patientModel.getGender());
+            info.setDegree_dependence(patientModel.getDegree_dependence());
+            info.setObservations(patientModel.getObservations());
+
+            PatientModel patient = this.patientRepository.save(info);
+            return ResponseEntity.ok(patient);
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
