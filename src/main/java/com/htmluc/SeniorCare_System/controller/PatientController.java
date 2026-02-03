@@ -105,6 +105,7 @@ public class PatientController
     @Operation(summary = "Delete patient data", description = "Method for delete patient data.", deprecated = false)
     @ApiResponse(responseCode = "204", description = "Patient deleted successfully")
     @ApiResponse(responseCode = "404", description = "Patient not found")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Void> delete(@PathVariable Long id)
     {
         if (!this.patientRepository.existsById(id))

@@ -20,9 +20,6 @@ public class MedicineController
     @Autowired
     private MedicineRepository medicineRepository;
 
-    @Autowired
-    private PatientRepository patientRepository;
-
     @GetMapping
     @Operation(summary = "List all medicines", description = "Retrieves a comprehensive list of all registered medicines from the database.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of medicine")
@@ -78,5 +75,20 @@ public class MedicineController
     {
         MedicineModel medicine = this.medicineRepository.save(medicineModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(medicine);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete medicine data", description = "Method for delete medicine data.", deprecated = false)
+    @ApiResponse(responseCode = "204", description = "Medicine deleted successfully")
+    @ApiResponse(responseCode = "404", description = "Medicine not found")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<Void> delete(@PathVariable Long id)
+    {
+        if (!this.medicineRepository.existsById(id))
+        {
+            return ResponseEntity.notFound().build();
+        }
+        this.medicineRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
