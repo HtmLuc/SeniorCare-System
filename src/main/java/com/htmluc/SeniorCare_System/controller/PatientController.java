@@ -1,6 +1,5 @@
 package com.htmluc.SeniorCare_System.controller;
 
-import com.htmluc.SeniorCare_System.model.FamilyContactModel;
 import com.htmluc.SeniorCare_System.model.PatientModel;
 import com.htmluc.SeniorCare_System.repository.PatientRepository;
 import io.swagger.v3.oas.annotations.Operation;
