@@ -28,8 +28,7 @@ public class FamilyContactController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Page<FamilyContactModel>> listAll(Pageable pageable)
     {
-        Page<FamilyContactModel> contacts =
-                familyContactRepository.findAll(pageable);
+        Page<FamilyContactModel> contacts = familyContactRepository.findAll(pageable);
 
         if (contacts.isEmpty()) {
             return ResponseEntity.noContent().build();
