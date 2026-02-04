@@ -259,7 +259,7 @@
                                 <h5 class="card-title mb-1">Ações Rápidas</h5>
                                 <div class="d-flex gap-2">
                                     <!-- Botão Adicionar Paciente (Admin e Enfermeiro) -->
-                                    <a th:href="@{/v1/patients}" 
+                                    <a th:href="@{/v1/patients/form}" 
                                        class="btn btn-success btn-sm btn-action">
                                         <i class="fas fa-plus me-1"></i>Novo Paciente
                                     </a>
@@ -379,7 +379,7 @@
                     <!-- Botões de Ação -->
                     <div>
                         <!-- Botão Adicionar Paciente (Admin e Enfermeiro) -->
-                        <a th:href="@{/v1/patients}" 
+                        <a th:href="@{/v1/patients/form}" 
                            class="btn btn-add me-2"
                            th:if="${role == 'ADMIN' or role == 'ENFERMEIRO'}">
                             <i class="fas fa-plus me-1"></i>Adicionar Paciente

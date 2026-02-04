@@ -13,12 +13,12 @@ public class PatientModel
     @Id
     private Long id;
 
-    private char gender;
+    private String gender;
 
     @NotBlank
     private String nationality;
 
-    private int degree_dependence;
+    private String degree_dependence;
 
     @NotBlank
     private String source_income;

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${modo == 'novo' ? 'Adicionar Paciente' : 'Editar Paciente'}">Formulário Paciente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #f8f9fa;
+            padding-top: 20px;
+        }
+        .form-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #3498db;
+        }
+        .form-section h5 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">
+                SeniorCare System
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <i class="fas fa-user"></i> 
+                    <span th:text="${username}">Usuário</span>
+                    <span class="badge bg-light text-dark ms-2" th:text="${role}">Papel</span>
+                </span>
+                <a href="/dashboard" class="btn btn-outline-light btn-sm">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-container">
+            <!-- Cabeçalho -->
+            <div class="mb-4">
+                <h2 th:text="${modo == 'novo' ? '➕ Adicionar Novo Paciente' : '✏️ Editar Paciente'}">
+                    Formulário de Paciente
+                </h2>
+                <p class="text-muted">Preencha os dados do paciente abaixo</p>
+            </div>
+
+            <!-- Mensagens -->
+            <div id="messageArea"></div>
+
+            <!-- Formulário -->
+            <form id="pacienteForm">
+                <input type="hidden" id="modo" th:value="${modo}">
+                <input type="hidden" id="pacienteId" th:value="${paciente?.id}">
+                
+                <!-- Seção: Dados Pessoais -->
+                <div class="form-section">
+                    <h5><i class="fas fa-user me-2"></i> Dados Pessoais</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nome" class="form-label required">Nome Completo</label>
+                            <input type="text" class="form-control" id="nome" 
+                                   th:value="${paciente?.person?.name}"
+                                   required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="cpf" class="form-label required">CPF</label>
+                            <input type="text" class="form-control" id="cpf" 
+                                   th:value="${paciente?.person?.cpf}"
+                                   placeholder="000.000.000-00"
+                                   required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label required">E-mail</label>
+                            <input type="email" class="form-control" id="email" 
+                                   th:value="${paciente?.person?.email}"
+                                   required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="telefone" class="form-label required">Telefone</label>
+                            <input type="text" class="form-control" id="telefone" 
+                                   th:value="${paciente?.person?.phoneNumber}"
+                                   placeholder="(11) 99999-9999"
+                                   required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control" id="dataNascimento"
+                                    th:value="${paciente?.person?.dateBirth}">
+                        </div>
+    
+
+                        <div class="col-md-6 mb-3">
+                            <label for="nacionalidade" class="form-label required">Nacionalidade</label>
+                            <input type="text" class="form-control" id="nacionalidade" 
+                                    th:value="${paciente?.nationality}"
+                                    value="Brasileiro(a)"
+                                    required>
+                         </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fonteRenda" class="form-label required">Fonte de Renda</label>
+                            <select class="form-select" id="fonteRenda" required>
+                                <option value="">Selecione...</option>
+                                <option value="APOSENTADORIA" th:selected="${paciente?.source_income == 'APOSENTADORIA'}">Aposentadoria</option>
+                                <option value="PENSÃO" th:selected="${paciente?.source_income == 'PENSÃO'}">Pensão</option>
+                                <option value="RENDA_FAMILIAR" th:selected="${paciente?.source_income == 'RENDA_FAMILIAR'}">Renda Familiar</option>
+                                <option value="BENEFÍCIO_SOCIAL" th:selected="${paciente?.source_income == 'BENEFÍCIO_SOCIAL'}">Benefício Social</option>
+                                <option value="OUTROS" th:selected="${paciente?.source_income == 'OUTROS'}">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+
+                <!-- Seção: Dados Médicos -->
+                <div class="form-section">
+                    <h5><i class="fas fa-heartbeat me-2"></i> Dados Médicos</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="genero" class="form-label required">Gênero</label>
+                            <select class="form-select" id="genero" required>
+                                <option value="">Selecione...</option>
+                                <option value="MASCULINO" th:selected="${paciente?.gender == 'MASCULINO'}">Masculino</option>
+                                <option value="FEMININO" th:selected="${paciente?.gender == 'FEMININO'}">Feminino</option>
+                                <option value="OUTRO" th:selected="${paciente?.gender == 'OUTRO'}">Outro</option>
+                                <option value="NAO_INFORMAR" th:selected="${paciente?.gender == 'NAO_INFORMAR'}">Prefiro não informar</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="grauDependencia" class="form-label required">Grau de Dependência</label>
+                            <select class="form-select" id="grauDependencia" required>
+                                <option value="">Selecione...</option>
+                                <option value="LEVE" th:selected="${paciente?.degree_dependence == 'LEVE'}">Leve</option>
+                                <option value="MODERADO" th:selected="${paciente?.degree_dependence == 'MODERADO'}">Moderado</option>
+                                <option value="GRAVE" th:selected="${paciente?.degree_dependence == 'GRAVE'}">Grave</option>
+                                <option value="TOTAL" th:selected="${paciente?.degree_dependence == 'TOTAL'}">Total</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="observacoes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="observacoes" rows="4"
+                                  th:text="${paciente?.observations}"
+                                  placeholder="Informações adicionais sobre o paciente..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Botões -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="/dashboard" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i> Cancelar
+                    </a>
+                    
+                    <div>
+                        <button type="button" class="btn btn-primary me-2" id="btnSalvar">
+                            <i class="fas fa-save me-1"></i>
+                            <span th:text="${modo == 'novo' ? 'Salvar Paciente' : 'Atualizar Paciente'}">
+                                Salvar
+                            </span>
+                        </button>
+                        
+                        <button type="button" class="btn btn-success" onclick="salvarENovo()">
+                            <i class="fas fa-plus me-1"></i> Salvar e Novo
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Debug (opcional) -->
+            <div class="mt-4 text-muted small">
+                <p><i class="fas fa-info-circle me-1"></i> 
+                    Esta página usa a API REST: <code>/v1/patients</code>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Formata CPF
+        document.getElementById('cpf').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d)/, '$1.$2')
+                            .replace(/(\d{3})(\d)/, '$1.$2')
+                            .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+        
+        // Formata Telefone
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{2})(\d)/, '($1) $2')
+                            .replace(/(\d{5})(\d)/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+        
+        // Função para salvar paciente
+        async function salvarPaciente() {
+            const modo = document.getElementById('modo').value;
+            const pacienteId = document.getElementById('pacienteId').value;
+            
+            // Coleta dados
+            const pacienteData = {
+                person: {
+                    name: document.getElementById('nome').value,
+                    cpf: document.getElementById('cpf').value.replace(/\D/g, ''),
+                    email: document.getElementById('email').value,
+                    phoneNumber: document.getElementById('telefone').value,
+                    dateBirth: document.getElementById('dataNascimento').value || null
+                },
+                gender: document.getElementById('genero').value,
+                nationality: document.getElementById('nacionalidade').value,
+                degree_dependence: document.getElementById('grauDependencia').value,
+                source_income: document.getElementById('fonteRenda').value,
+                observations: document.getElementById('observacoes').value
+            };
+            
+            // Validação básica
+            if (!pacienteData.person.name || !pacienteData.person.cpf || 
+                !pacienteData.person.email || !pacienteData.gender || 
+                !pacienteData.degree_dependence) {
+                showMessage('Preencha todos os campos obrigatórios!', 'danger');
+                return;
+            }
+            
+            try {
+                let response;
+                
+                if (modo === 'editar' && pacienteId) {
+                    // PUT para atualizar
+                    response = await fetch(`/v1/patients/${pacienteId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(pacienteData)
+                    });
+                } else {
+                    response = await fetch('/v1/patients', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(pacienteData)
+                    });
+                }
+                
+                if (response.ok) {
+                    showMessage('Paciente salvo com sucesso!', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/dashboard?success=paciente_salvo';
+                    }, 1500);
+                } else if (response.status === 409) {
+                    showMessage('CPF já cadastrado no sistema!', 'warning');
+                } else {
+                    const error = await response.text();
+                    showMessage('Erro ao salvar: ' + error, 'danger');
+                }
+            } catch (error) {
+                showMessage('Erro de conexão: ' + error.message, 'danger');
+            }
+        }
+        
+        function salvarENovo() {
+            salvarPaciente().then(() => {
+                // Limpa o formulário para novo cadastro
+                if (document.getElementById('modo').value === 'novo') {
+                    document.getElementById('pacienteForm').reset();
+                    document.getElementById('messageArea').innerHTML = `
+                        <div class="alert alert-success">
+                            Paciente salvo! Preencha os dados para um novo paciente.
+                        </div>
+                    `;
+                    document.getElementById('nome').focus();
+                }
+            });
+        }
+        
+        function showMessage(text, type) {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show">
+                    ${text}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        }
+        
+        // Validação ao enviar formulário
+        document.getElementById('pacienteForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            salvarPaciente();
+        });
+        
+        console.log('Formulário de paciente carregado');
+        console.log('Modo:', document.getElementById('modo').value);
+
+        // Adiciona evento ao botão
+        document.getElementById('btnSalvar')?.addEventListener('click', function(e) {
+        console.log('Botão Salvar clicado!');
+        e.preventDefault(); // Previne comportamento padrão
+        salvarPaciente();
+        });
+
+        // Adiciona evento ao botão "Salvar e Novo"
+        document.querySelector('button[onclick="salvarENovo()"]')?.addEventListener('click', function(e) {
+        console.log('Botão Salvar e Novo clicado!');
+        e.preventDefault();
+        salvarENovo();
+        });
+    </script>
+</body>
+</html>
