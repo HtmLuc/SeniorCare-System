@@ -21,7 +21,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -45,7 +44,7 @@ public class PatientController
     public String patientForm(Model model, @RequestParam(required = false) Long id, Authentication authentication)
     {
         
-        System.out.println("===== ACESSANDO FORMULÁRIO DE PACIENTE =====");
+        System.out.println("ACESSANDO FORMULÁRIO DE PACIENTE");
         System.out.println("ID: " + id);
         System.out.println("Usuário: " + (authentication != null ? authentication.getName() : "null"));
         
@@ -107,7 +106,7 @@ public class PatientController
             model.addAttribute("paciente", paciente);
         }
         
-        System.out.println("===== RETORNANDO PÁGINA paciente-form.html =====");
+        System.out.println("RETORNANDO PÁGINA paciente-form.html");
         return "paciente-form";
     }
   

@@ -23,21 +23,17 @@ public class DashboardController {
                           @RequestParam(required = false) String success,
                           @RequestParam(required = false) String error) {
         
-        // Informações do usuário logado
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         String role = auth.getAuthorities().iterator().next().getAuthority();
         
-        // Busca pacientes
         List<PatientModel> pacientes = patientRepository.findAll();
         
-        // Adiciona atributos ao modelo
         model.addAttribute("username", username);
         model.addAttribute("role", role.replace("ROLE_", ""));
         model.addAttribute("pacientes", pacientes);
         model.addAttribute("totalPacientes", pacientes.size());
         
-        // Mensagens
         if (success != null) {
             model.addAttribute("successMessage", getSuccessMessage(success));
         }
