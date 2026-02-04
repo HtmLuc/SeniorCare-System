@@ -86,13 +86,13 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails admin = User.builder()
-            .username("admin")
+            .username("João Augusto")
             .password(passwordEncoder().encode("admin123"))
             .roles("ADMIN")  
             .build();
         
         UserDetails enfermeiro = User.builder()
-            .username("enfermeiro")
+            .username("Luciano Costa")
             .password(passwordEncoder().encode("senha123"))
             .roles("ENFERMEIRO")  
             .build();
