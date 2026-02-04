@@ -1,17 +1,15 @@
 package com.htmluc.SeniorCare_System.controller;
 
 import com.htmluc.SeniorCare_System.model.MedicineModel;
-import com.htmluc.SeniorCare_System.model.MonitoringModel;
 import com.htmluc.SeniorCare_System.repository.MedicineRepository;
-import com.htmluc.SeniorCare_System.repository.PatientRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/medicines")
@@ -25,17 +23,33 @@ public class MedicineController
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of medicine")
     @ApiResponse(responseCode = "204", description = "No medicine found in the database")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<List<MedicineModel>> listAll()
+    public ResponseEntity<Page<MedicineModel>> listAll(Pageable pageable)
     {
-        List<MedicineModel> allMedicine = this.medicineRepository.findAll();
+        Page<MedicineModel> medicines = medicineRepository.findAll(pageable);
 
-        if (allMedicine.isEmpty())
-        {
+        if (medicines.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(allMedicine);
+        return ResponseEntity.ok(medicines);
     }
+
+    @GetMapping("/search")
+    @Operation(summary = "Search medicines by name and acquisition", description = "Filters medicines by name and acquisition type")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of medicine")
+    @ApiResponse(responseCode = "204", description = "No medicine found in the database")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<Page<MedicineModel>> search(@RequestParam String name, @RequestParam String acquisition, Pageable pageable)
+    {
+        Page<MedicineModel> medicines = medicineRepository.searchByNameAndAcquisition(name, acquisition, pageable);
+
+        if (medicines.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(medicines);
+    }
+
 
     @GetMapping("/{id}")
     @Operation(summary = "Get medicine by ID", description = "Retrieves a medicine by its unique identifier")
