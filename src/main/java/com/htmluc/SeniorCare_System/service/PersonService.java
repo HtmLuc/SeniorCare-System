@@ -1,5 +1,7 @@
 package com.htmluc.SeniorCare_System.service;
 
+import com.htmluc.SeniorCare_System.exception.BusinessException;
+import com.htmluc.SeniorCare_System.exception.ResourceNotFoundException;
 import com.htmluc.SeniorCare_System.model.PersonModel;
 import com.htmluc.SeniorCare_System.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,17 +76,17 @@ public class PersonService
     {
         if (!isCpfValid(person.getCpf()))
         {
-            throw new IllegalArgumentException("Invalid CPF");
+            throw new BusinessException("CPF inválido");
         }
 
         if (cpfExists(person.getCpf()))
         {
-            throw new IllegalStateException("CPF already exists in the system");
+            throw new BusinessException("CPF já cadastrado");
         }
 
         if (person.getDateBirth() == null)
         {
-            throw new IllegalArgumentException("Date of birth is required.");
+            throw new BusinessException("Data de nascimento é obrigatória");
         }
 
         return personRepository.save(person);
@@ -103,11 +105,11 @@ public class PersonService
     @Transactional
     public PersonModel updatePerson(Long id, PersonModel updatedPerson)
     {
-        PersonModel existing = personRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Person not found"));
+        PersonModel existing = personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada"));
 
         if (!existing.getCpf().equals(updatedPerson.getCpf()))
         {
-            throw new IllegalArgumentException("It is not permitted to change the CPF");
+            throw new BusinessException("Não é permitido alterar o CPF");
         }
 
         existing.setName(updatedPerson.getName());
@@ -123,7 +125,7 @@ public class PersonService
     {
         if (!personRepository.existsById(id))
         {
-            throw new IllegalArgumentException("Person not found");
+            throw new ResourceNotFoundException("Pessoa não encontrada");
         }
 
         personRepository.deleteById(id);
