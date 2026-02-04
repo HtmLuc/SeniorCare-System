@@ -1,5 +1,6 @@
 package com.htmluc.SeniorCare_System.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -31,9 +32,7 @@ public class PatientModel
     private PersonModel person;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    private List<BandageModel> bandage;
-
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<MonitoringModel> monitorings;
   
     @ManyToOne

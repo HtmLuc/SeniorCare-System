@@ -23,7 +23,4 @@ public class UserModel
     @MapsId
     @JoinColumn(name = "person_id", nullable = false)
     private PersonModel person;
-
-    @OneToMany(mappedBy = "user")
-    private List<BandageModel> bandage;
 }

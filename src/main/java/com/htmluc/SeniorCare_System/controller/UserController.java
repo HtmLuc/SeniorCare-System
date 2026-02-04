@@ -2,16 +2,17 @@ package com.htmluc.SeniorCare_System.controller;
 
 import com.htmluc.SeniorCare_System.model.UserModel;
 import com.htmluc.SeniorCare_System.repository.UserRepository;
+import com.htmluc.SeniorCare_System.service.PersonService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -21,19 +22,39 @@ public class UserController
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PersonService personService;
+
     @GetMapping
     @Operation(summary = "List all users", description = "Retrieves a comprehensive list of all registered users from the database.", deprecated = false)
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of users")
     @ApiResponse(responseCode = "204", description = "No user found in the database")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<List<UserModel>> listAll()
+    public ResponseEntity<Page<UserModel>> listAll(Pageable pageable)
     {
-        List<UserModel> allUsers = this.userRepository.findAll();
-        if (allUsers.isEmpty())
-        {
+        Page<UserModel> users = userRepository.findAll(pageable);
+
+        if (users.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(allUsers);
+
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Search users by function", description = "Filter users by function with pagination")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of users")
+    @ApiResponse(responseCode = "204", description = "No user found in the database")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<Page<UserModel>> searchByFunction(@RequestParam String function, Pageable pageable)
+    {
+        Page<UserModel> users = userRepository.findByFunctionCustom(function, pageable);
+
+        if (users.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
@@ -49,13 +70,18 @@ public class UserController
     @PostMapping
     @Operation(summary = "Save user data", description = "Method for saving user data.", deprecated = false)
     @ApiResponse(responseCode = "201", description = "User created successfully")
-    @ApiResponse(responseCode = "409", description = "User already exists")
+    @ApiResponse(responseCode = "400", description = "Invalid CPF or data")
+    @ApiResponse(responseCode = "409", description = "CPF already exists")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<UserModel> create(@RequestBody @Valid UserModel userModel)
     {
-        userModel.setId(null);
-        UserModel user = this.userRepository.save(userModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        var savedPerson = personService.createPerson(userModel.getPerson());
+
+        userModel.setPerson(savedPerson);
+        userModel.setId(savedPerson.getId());
+        UserModel savedUser = userRepository.save(userModel);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     @DeleteMapping("/{id}")
@@ -68,6 +94,7 @@ public class UserController
         {
             return ResponseEntity.notFound().build();
         }
+
         this.userRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

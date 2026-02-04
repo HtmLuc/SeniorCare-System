@@ -2,7 +2,10 @@ package com.htmluc.SeniorCare_System.controller;
 
 import com.htmluc.SeniorCare_System.model.FamilyContactModel;
 import com.htmluc.SeniorCare_System.repository.FamilyContactRepository;
+import com.htmluc.SeniorCare_System.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/familyContact")
@@ -21,21 +22,39 @@ public class FamilyContactController
     @Autowired
     private FamilyContactRepository familyContactRepository;
 
+    @Autowired
+    private PersonService personService;
+
     @GetMapping
     @Operation(summary = "List all family contact", description = "Retrieves a comprehensive list of all registered family contact from the database.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of family contact")
     @ApiResponse(responseCode = "204", description = "No family contact found in the database")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<List<FamilyContactModel>> listAll()
+    public ResponseEntity<Page<FamilyContactModel>> listAll(Pageable pageable)
     {
-        List<FamilyContactModel> allFamilContacts = this.familyContactRepository.findAll();
+        Page<FamilyContactModel> contacts = familyContactRepository.findAll(pageable);
 
-        if (allFamilContacts.isEmpty())
-        {
+        if (contacts.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(allFamilContacts);
+        return ResponseEntity.ok(contacts);
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Filter family contacts", description = "Filter family contacts by city or relationship")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of family contact")
+    @ApiResponse(responseCode = "204", description = "No family contact found in the database")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<Page<FamilyContactModel>> search(@RequestParam(required = false) String city, @RequestParam(required = false) String relationship, Pageable pageable)
+    {
+        Page<FamilyContactModel> contacts = familyContactRepository.findByCityOrRelationship(city, relationship, pageable);
+
+        if (contacts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(contacts);
     }
 
     @GetMapping("/{id}")
@@ -71,14 +90,20 @@ public class FamilyContactController
     }
 
     @PostMapping
-    @Operation(summary = "Create a new family contact",
-            description = "Creates a new family contact with the provided data")
+    @Operation(summary = "Create a new family contact", description = "Creates a new family contact with the provided data")
     @ApiResponse(responseCode = "201", description = "Family contact created successfully")
-    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "400", description = "Invalid CPF or data")
+    @ApiResponse(responseCode = "409", description = "CPF already exists")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<FamilyContactModel> create(@RequestBody FamilyContactModel familyContactModel)
     {
-        FamilyContactModel savedContact = this.familyContactRepository.save(familyContactModel);
+        var savedPerson = personService.createPerson(familyContactModel.getPerson());
+
+        familyContactModel.setPerson(savedPerson);
+        familyContactModel.setId(savedPerson.getId());
+
+        FamilyContactModel savedContact = familyContactRepository.save(familyContactModel);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(savedContact);
     }
 

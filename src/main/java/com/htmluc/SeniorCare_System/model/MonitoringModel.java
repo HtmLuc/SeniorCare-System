@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class MonitoringModel
 {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
