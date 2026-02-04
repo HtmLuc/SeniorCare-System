@@ -2,6 +2,7 @@ package com.htmluc.SeniorCare_System.controller;
 
 import com.htmluc.SeniorCare_System.model.FamilyContactModel;
 import com.htmluc.SeniorCare_System.repository.FamilyContactRepository;
+import com.htmluc.SeniorCare_System.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,9 @@ public class FamilyContactController
 {
     @Autowired
     private FamilyContactRepository familyContactRepository;
+
+    @Autowired
+    private PersonService personService;
 
     @GetMapping
     @Operation(summary = "List all family contact", description = "Retrieves a comprehensive list of all registered family contact from the database.")
@@ -88,11 +92,18 @@ public class FamilyContactController
     @PostMapping
     @Operation(summary = "Create a new family contact", description = "Creates a new family contact with the provided data")
     @ApiResponse(responseCode = "201", description = "Family contact created successfully")
-    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "400", description = "Invalid CPF or data")
+    @ApiResponse(responseCode = "409", description = "CPF already exists")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<FamilyContactModel> create(@RequestBody FamilyContactModel familyContactModel)
     {
-        FamilyContactModel savedContact = this.familyContactRepository.save(familyContactModel);
+        var savedPerson = personService.createPerson(familyContactModel.getPerson());
+
+        familyContactModel.setPerson(savedPerson);
+        familyContactModel.setId(savedPerson.getId());
+
+        FamilyContactModel savedContact = familyContactRepository.save(familyContactModel);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(savedContact);
     }
 

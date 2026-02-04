@@ -1,9 +1,12 @@
 package com.htmluc.SeniorCare_System.controller;
 
 import com.htmluc.SeniorCare_System.model.MedicineModel;
+import com.htmluc.SeniorCare_System.model.MonitoringModel;
 import com.htmluc.SeniorCare_System.model.PatientModel;
 import com.htmluc.SeniorCare_System.repository.MedicineRepository;
+import com.htmluc.SeniorCare_System.repository.MonitoringRepository;
 import com.htmluc.SeniorCare_System.repository.PatientRepository;
+import com.htmluc.SeniorCare_System.service.PersonService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,6 +29,12 @@ public class PatientController
 
     @Autowired
     private MedicineRepository medicineRepository;
+
+    @Autowired
+    private MonitoringRepository monitoringRepository;
+
+    @Autowired
+    private PersonService personService;
 
     @GetMapping
     @Operation(summary = "List all patients", description = "Retrieves a comprehensive list of all registered patients from the database.", deprecated = false)
@@ -82,6 +91,7 @@ public class PatientController
             info.setGender(patientModel.getGender());
             info.setDegree_dependence(patientModel.getDegree_dependence());
             info.setObservations(patientModel.getObservations());
+            personService.updatePerson(id, patientModel.getPerson());
 
             PatientModel patient = this.patientRepository.save(info);
             return ResponseEntity.ok(patient);
@@ -91,16 +101,15 @@ public class PatientController
     @PostMapping
     @Operation(summary = "Save patient data", description = "Method for saving patient data.", deprecated = false)
     @ApiResponse(responseCode = "201", description = "Patient created successfully")
-    @ApiResponse(responseCode = "409", description = "Patient already exists")
+    @ApiResponse(responseCode = "400", description = "Invalid CPF or data")
+    @ApiResponse(responseCode = "409", description = "CPF already exists")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<PatientModel> create(@RequestBody PatientModel patientModel)
     {
-        if (patientRepository.existsByPersonCpf(patientModel.getPerson().getCpf()))
-        {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        var savedPerson = personService.createPerson(patientModel.getPerson());
 
-        patientModel.setId(null);
+        patientModel.setPerson(savedPerson);
+        patientModel.setId(savedPerson.getId());
         PatientModel patient = patientRepository.save(patientModel);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(patient);
@@ -123,6 +132,21 @@ public class PatientController
             patient.getMedicines().add(medicine);
             patientRepository.save(patient);
             return ResponseEntity.status(HttpStatus.CREATED).body(medicine);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/{id}/monitoring")
+    @Operation(summary = "Create a new monitoring for a patient", description = "Creates a new monitoring record associated with a specific patient")
+    @ApiResponse(responseCode = "201", description = "Monitoring created successfully")
+    @ApiResponse(responseCode = "404", description = "Patient not found")
+    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<MonitoringModel> create(@PathVariable Long id, @RequestBody MonitoringModel monitoringModel)
+    {
+        return this.patientRepository.findById(id).map(patient -> {
+            monitoringModel.setPatient(patient);
+            MonitoringModel monitoring = this.monitoringRepository.save(monitoringModel);
+            return ResponseEntity.status(HttpStatus.CREATED).body(monitoring);
         }).orElse(ResponseEntity.notFound().build());
     }
 

@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface PersonRepository extends JpaRepository<PersonModel, Long>
 {
+    boolean existsByCpf(String cpf);
+
     @Query("SELECT p FROM tb_person p WHERE p.cpf = :cpf OR p.name LIKE %:name%")
     Page<PersonModel> findByCpfOrName(@Param("cpf") String cpf, @Param("name") String name, Pageable pageable);
 }

@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface MonitoringRepository extends JpaRepository<MonitoringModel, Long>
 {
-    @Query("SELECT mo FROM tb_monitoring mo WHERE mo.patient.id = :patientId ORDER BY mo.createdAt DESC")
-    Page<MonitoringModel> findHistoryByPatient(@Param("id") Long patientId, Pageable pageable);
+    @Query("SELECT mo FROM tb_monitoring mo WHERE mo.patient.id = :id ORDER BY mo.createdAt DESC")
+    Page<MonitoringModel> findHistoryByPatient(@Param("id") Long id, Pageable pageable);
 }

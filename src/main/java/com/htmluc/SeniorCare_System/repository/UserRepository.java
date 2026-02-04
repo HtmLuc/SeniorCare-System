@@ -11,6 +11,6 @@ import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<UserModel, Long>
 {
-    @Query("SELECT u FROM tb_user u WHERE u.function LIKE %:function%")
-    Page<UserModel> findByFunctionCustom(@Param("func") String function, Pageable pageable);
+    @Query("SELECT u FROM tb_user u WHERE u.function LIKE %:func%")
+    Page<UserModel> findByFunctionCustom(@Param("func") String func, Pageable pageable);
 }

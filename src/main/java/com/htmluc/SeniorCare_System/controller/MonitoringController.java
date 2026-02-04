@@ -88,21 +88,6 @@ public class MonitoringController
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/patient/{id}")
-    @Operation(summary = "Create a new monitoring for a patient", description = "Creates a new monitoring record associated with a specific patient")
-    @ApiResponse(responseCode = "201", description = "Monitoring created successfully")
-    @ApiResponse(responseCode = "404", description = "Patient not found")
-    @ApiResponse(responseCode = "400", description = "Invalid input data")
-    @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<MonitoringModel> create(@PathVariable Long id, @RequestBody MonitoringModel monitoringModel)
-    {
-        return this.patientRepository.findById(id).map(patient -> {
-            monitoringModel.setPatient(patient);
-            MonitoringModel monitoring = this.monitoringRepository.save(monitoringModel);
-            return ResponseEntity.status(HttpStatus.CREATED).body(monitoring);
-        }).orElse(ResponseEntity.badRequest().build());
-    }
-
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete monitoring data by ID", description = "Method for delete monitoring data")
     @ApiResponse(responseCode = "204", description = "Monitoring deleted successfully")
