@@ -21,41 +21,30 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(authz -> authz
                 
-                // ROTAS PÚBLICAS
                 .requestMatchers(
                     "/",        
                     "/login",               
                     "/css/**",              
                     "/js/**",               
                     "/images/**",          
-                    "/swagger-ui/**",       
-                    "/v3/api-docs/**",      
-                    "/public/**"        
+                    "/error"        
                 ).permitAll()
                 
-                // ROTAS DO ADMIN (SOMENTE ADMIN)
                 .requestMatchers(
                     "/v1/users/**",
                     "/h2-console/**"       
                 ).hasRole("ADMIN")
                 
-                
-                // ROTAS DO USER E ADMIN
                 .requestMatchers(
                     "/v1/patients/**",
                     "/v1/familyContact/**"
                 ).hasAnyRole("ADMIN", "ENFERMEIRO")
                 
-                // DASHBOARD (qualquer usuário logado pode acessar)
-                .requestMatchers("/dashboard").authenticated()
-                
-                // QUALQUER OUTRA ROTA precisa de autenticação
                 .anyRequest().authenticated()
             )
             
             .formLogin(form -> form
                 .loginPage("/login")
-                .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/dashboard", true)
                 .failureUrl("/login?error=true")
                 .permitAll()
@@ -64,16 +53,11 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout=true")
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
                 .permitAll()
             )
             
-            .headers(headers -> headers
-                .frameOptions(frame -> frame.sameOrigin())
-            )
-            .csrf(csrf -> csrf.disable())
-            .httpBasic(httpBasic -> {});
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+            .csrf(csrf -> csrf.disable());
         
         return http.build();
     }
