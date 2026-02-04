@@ -6,11 +6,11 @@ import com.htmluc.SeniorCare_System.repository.PatientRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("v1/monitoring")
@@ -27,17 +27,33 @@ public class MonitoringController
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of monitoring")
     @ApiResponse(responseCode = "204", description = "No monitoring found in the database")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<List<MonitoringModel>> listAll()
+    public ResponseEntity<Page<MonitoringModel>> listAll(Pageable pageable)
     {
-        List<MonitoringModel> allMonitoring = this.monitoringRepository.findAll();
+        Page<MonitoringModel> monitorings = monitoringRepository.findAll(pageable);
 
-        if (allMonitoring.isEmpty())
-        {
+        if (monitorings.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(allMonitoring);
+        return ResponseEntity.ok(monitorings);
     }
+
+    @GetMapping("/search")
+    @Operation(summary = "Get monitoring history by patient", description = "Returns monitoring history of a patient ordered by date")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of monitoring")
+    @ApiResponse(responseCode = "204", description = "No monitoring found in the database")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<Page<MonitoringModel>> historyByPatient(@RequestParam Long patientId, Pageable pageable)
+    {
+        Page<MonitoringModel> history = monitoringRepository.findHistoryByPatient(patientId, pageable);
+
+        if (history.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(history);
+    }
+
 
     @GetMapping("/{id}")
     @Operation(summary = "Get monitoring by ID", description = "Retrieves a monitoring by its unique identifier")
