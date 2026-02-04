@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,15 +32,33 @@ public class PatientController
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of patient")
     @ApiResponse(responseCode = "204", description = "No patients found in the database")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<List<PatientModel>> listAll()
+    public ResponseEntity<Page<PatientModel>> listAll(Pageable pageable)
     {
-        List<PatientModel> allPatients = this.patientRepository.findAll();
-        if (allPatients.isEmpty())
-        {
+        Page<PatientModel> patients = patientRepository.findAll(pageable);
+
+        if (patients.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(allPatients);
+
+        return ResponseEntity.ok(patients);
     }
+
+    @GetMapping("/search")
+    @Operation(summary = "Filter patients by dependence and nationality", description = "Filters patients using business rules with pagination")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of patient")
+    @ApiResponse(responseCode = "204", description = "No patients found in the database")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    public ResponseEntity<Page<PatientModel>> filterPatients(@RequestParam int degree, @RequestParam String nationality, Pageable pageable)
+    {
+        Page<PatientModel> patients = patientRepository.filterByDependenceAndNat(degree, nationality, pageable);
+
+        if (patients.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(patients);
+    }
+
 
     @GetMapping("/{id}")
     @Operation(summary = "Get patient by ID", description = "Retrieves a patient by its unique identifier")
@@ -93,8 +113,13 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<MedicineModel> createByPatient(@PathVariable Long id, @RequestBody MedicineModel medicineModel)
     {
-        return this.patientRepository.findById(id).map(patient -> {
-            MedicineModel medicine = this.medicineRepository.save(medicineModel);
+        return patientRepository.findById(id).map(patient -> {
+            MedicineModel medicine = medicineRepository.save(medicineModel);
+
+            if (patient.getMedicines() == null) {
+                patient.setMedicines(new java.util.ArrayList<>());
+            }
+
             patient.getMedicines().add(medicine);
             patientRepository.save(patient);
             return ResponseEntity.status(HttpStatus.CREATED).body(medicine);
@@ -112,6 +137,7 @@ public class PatientController
         {
             return ResponseEntity.notFound().build();
         }
+
         this.patientRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
