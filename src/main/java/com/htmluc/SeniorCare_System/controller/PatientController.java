@@ -5,7 +5,6 @@ import com.htmluc.SeniorCare_System.model.MonitoringModel;
 import com.htmluc.SeniorCare_System.model.PatientModel;
 import com.htmluc.SeniorCare_System.repository.MedicineRepository;
 import com.htmluc.SeniorCare_System.repository.MonitoringRepository;
-import com.htmluc.SeniorCare_System.model.PersonModel;
 import com.htmluc.SeniorCare_System.repository.PatientRepository;
 import com.htmluc.SeniorCare_System.service.PersonService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,12 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/v1/patients")
@@ -40,76 +35,6 @@ public class PatientController
     @Autowired
     private PersonService personService;
 
-    @GetMapping("/form")
-    public String patientForm(Model model, @RequestParam(required = false) Long id, Authentication authentication)
-    {
-        
-        System.out.println("ACESSANDO FORMULÁRIO DE PACIENTE");
-        System.out.println("ID: " + id);
-        System.out.println("Usuário: " + (authentication != null ? authentication.getName() : "null"));
-        
-        if (authentication != null)
-        {
-            String username = authentication.getName();
-            String role = authentication.getAuthorities()
-                .iterator().next().getAuthority()
-                .replace("ROLE_", "");
-            
-            System.out.println("Username: " + username);
-            System.out.println("Role: " + role);
-            
-            model.addAttribute("username", username);
-            model.addAttribute("role", role);
-        }
-        else
-        {
-            model.addAttribute("username", "Usuário");
-            model.addAttribute("role", "ADMIN");
-        }
-      
-        if (id != null && id > 0) {
-            System.out.println("MODO: EDITAR paciente ID: " + id);
-            model.addAttribute("modo", "editar");
-            try
-            {
-                Optional<PatientModel> optional = patientRepository.findById(id);
-                if (optional.isPresent())
-                {
-                    PatientModel paciente = optional.get();
-                    System.out.println("Paciente encontrado: " + 
-                        (paciente.getPerson() != null ? paciente.getPerson().getName() : "Sem nome"));
-                    model.addAttribute("paciente", paciente);
-                }
-                else
-                {
-                    System.out.println("Paciente NÃO encontrado, criando novo");
-                    PatientModel paciente = new PatientModel();
-                    paciente.setPerson(new PersonModel());
-                    model.addAttribute("paciente", paciente);
-                }
-            }
-            catch (Exception e)
-            {
-                System.out.println("Erro ao buscar paciente: " + e.getMessage());
-                PatientModel paciente = new PatientModel();
-                paciente.setPerson(new PersonModel());
-                model.addAttribute("paciente", paciente);
-            }
-        }
-        else
-        {
-            System.out.println("MODO: NOVO paciente");
-            model.addAttribute("modo", "novo");
-            
-            PatientModel paciente = new PatientModel();
-            paciente.setPerson(new PersonModel());
-            model.addAttribute("paciente", paciente);
-        }
-        
-        System.out.println("RETORNANDO PÁGINA paciente-form.html");
-        return "paciente-form";
-    }
-  
     @GetMapping
     @ResponseBody
     @Operation(summary = "List all patients", description = "Retrieves a comprehensive list of all registered patients from the database.", deprecated = false)
@@ -206,7 +131,7 @@ public class PatientController
     {
         return patientRepository.findById(id).map(patient -> {
             MedicineModel medicine = medicineRepository.save(medicineModel);
-          
+
             if (patient.getMedicines() == null)
             {
                 patient.setMedicines(new java.util.ArrayList<>());
