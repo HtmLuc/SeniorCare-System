@@ -41,22 +41,6 @@ public class UserController
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/search")
-    @Operation(summary = "Search users by function", description = "Filter users by function with pagination")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of users")
-    @ApiResponse(responseCode = "204", description = "No user found in the database")
-    @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<Page<UserModel>> searchByFunction(@RequestParam String function, Pageable pageable)
-    {
-        Page<UserModel> users = userRepository.findByFunctionCustom(function, pageable);
-
-        if (users.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(users);
-    }
-
     @GetMapping("/{id}")
     @Operation(summary = "Get user by ID", description = "Retrieves a user by its unique identifier")
     @ApiResponse(responseCode = "200", description = "User retrieved successfully")
@@ -79,9 +63,8 @@ public class UserController
 
         userModel.setPerson(savedPerson);
         userModel.setId(savedPerson.getId());
-        UserModel savedUser = userRepository.save(userModel);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(userModel));
     }
 
     @DeleteMapping("/{id}")
@@ -90,12 +73,8 @@ public class UserController
     @ApiResponse(responseCode = "404", description = "User not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if(!this.userRepository.existsById(id))
-        {
-            return ResponseEntity.notFound().build();
-        }
+        personService.deletePerson(id);
 
-        this.userRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
