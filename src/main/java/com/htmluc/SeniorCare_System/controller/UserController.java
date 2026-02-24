@@ -2,7 +2,7 @@ package com.htmluc.SeniorCare_System.controller;
 
 import com.htmluc.SeniorCare_System.model.UserModel;
 import com.htmluc.SeniorCare_System.repository.UserRepository;
-import com.htmluc.SeniorCare_System.service.PersonService;
+import com.htmluc.SeniorCare_System.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +23,7 @@ public class UserController
     private UserRepository userRepository;
 
     @Autowired
-    private PersonService personService;
+    private UserService userService;
 
     @GetMapping
     @Operation(summary = "List all users", description = "Retrieves a comprehensive list of all registered users from the database.", deprecated = false)
@@ -59,12 +59,7 @@ public class UserController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<UserModel> create(@RequestBody @Valid UserModel userModel)
     {
-        var savedPerson = personService.createPerson(userModel.getPerson());
-
-        userModel.setPerson(savedPerson);
-        userModel.setId(savedPerson.getId());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(userModel));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userModel));
     }
 
     @DeleteMapping("/{id}")
@@ -73,7 +68,7 @@ public class UserController
     @ApiResponse(responseCode = "404", description = "User not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        personService.deletePerson(id);
+        userService.deleteUser(id);
 
         return ResponseEntity.noContent().build();
     }
