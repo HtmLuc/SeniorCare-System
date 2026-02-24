@@ -1,4 +1,4 @@
-package com.htmluc.SeniorCare_System.exception;
+package com.htmluc.SeniorCare_System.exception.person;
 
 public class InvalidCpfException extends RuntimeException
 {

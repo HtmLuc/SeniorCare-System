@@ -1,5 +1,7 @@
 package com.htmluc.SeniorCare_System.exception;
 
+import com.htmluc.SeniorCare_System.exception.person.ConflictCpfException;
+import com.htmluc.SeniorCare_System.exception.person.InvalidCpfException;
 import com.htmluc.SeniorCare_System.model.ExceptionModel;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -20,9 +22,16 @@ public class ResourceExceptionHandler
     }
 
     @ExceptionHandler(InvalidCpfException.class)
-    public ResponseEntity<ExceptionModel> business(InvalidCpfException e, HttpServletRequest request)
+    public ResponseEntity<ExceptionModel> invalidCpf(InvalidCpfException e, HttpServletRequest request)
     {
         ExceptionModel err = new ExceptionModel(Instant.now(), HttpStatus.BAD_REQUEST.value(), "Invalid CPF", e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+
+    @ExceptionHandler(ConflictCpfException.class)
+    public ResponseEntity<ExceptionModel> conflictCpf(InvalidCpfException e, HttpServletRequest request)
+    {
+        ExceptionModel err = new ExceptionModel(Instant.now(), HttpStatus.CONFLICT.value(), "Invalid CPF", e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
     }
 }
