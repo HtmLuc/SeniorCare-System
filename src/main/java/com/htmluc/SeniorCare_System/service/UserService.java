@@ -1,6 +1,8 @@
 package com.htmluc.SeniorCare_System.service;
 
 import com.htmluc.SeniorCare_System.exception.BusinessException;
+import com.htmluc.SeniorCare_System.exception.person.ConflictCpfException;
+import com.htmluc.SeniorCare_System.exception.person.InvalidCpfException;
 import com.htmluc.SeniorCare_System.exception.ResourceNotFoundException;
 import com.htmluc.SeniorCare_System.model.UserModel;
 import com.htmluc.SeniorCare_System.repository.UserRepository;
@@ -23,12 +25,12 @@ public class UserService
     {
         if (!cpfUtil.isCpfValid(user.getPerson().getCpf()))
         {
-            throw new BusinessException("CPF inválido");
+            throw new InvalidCpfException();
         }
 
         if (cpfUtil.cpfExists(user.getPerson().getCpf()))
         {
-            throw new BusinessException("CPF já cadastrado");
+            throw new ConflictCpfException("CPF já cadastrado");
         }
 
         return userRepository.save(user);

@@ -34,4 +34,11 @@ public class ResourceExceptionHandler
         ExceptionModel err = new ExceptionModel(Instant.now(), HttpStatus.CONFLICT.value(), "Invalid CPF", e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
     }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ExceptionModel> businessException(BusinessException e, HttpServletRequest request)
+    {
+        ExceptionModel err = new ExceptionModel(Instant.now(), HttpStatus.UNPROCESSABLE_CONTENT.value(), "Business rule violated", e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(err);
+    }
 }
