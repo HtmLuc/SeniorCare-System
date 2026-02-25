@@ -57,7 +57,7 @@ public class UserController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<UserModel> create(@RequestBody @Valid UserModel userModel)
     {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userModel));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(userModel));
     }
 
     @DeleteMapping("/{id}")
@@ -66,7 +66,7 @@ public class UserController
     @ApiResponse(responseCode = "404", description = "User not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        userService.deleteUser(id);
+        userService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -6,7 +6,8 @@ import com.htmluc.SeniorCare_System.model.PatientModel;
 import com.htmluc.SeniorCare_System.repository.MedicineRepository;
 import com.htmluc.SeniorCare_System.repository.MonitoringRepository;
 import com.htmluc.SeniorCare_System.repository.PatientRepository;
-import com.htmluc.SeniorCare_System.service.PersonService;
+import com.htmluc.SeniorCare_System.service.PatientService;
+import com.htmluc.SeniorCare_System.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,7 +34,9 @@ public class PatientController
     private MonitoringRepository monitoringRepository;
 
     @Autowired
-    private PersonService personService;
+    private UserService userService;
+    @Autowired
+    private PatientService patientService;
 
     @GetMapping
     @ResponseBody
@@ -52,24 +55,6 @@ public class PatientController
 
         return ResponseEntity.ok(patients);
     }
-
-    @GetMapping("/search")
-    @Operation(summary = "Filter patients by dependence and nationality", description = "Filters patients using business rules with pagination")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of patient")
-    @ApiResponse(responseCode = "204", description = "No patients found in the database")
-    @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<Page<PatientModel>> filterPatients(@RequestParam int degree, @RequestParam String nationality, Pageable pageable)
-    {
-        Page<PatientModel> patients = patientRepository.filterByDependenceAndNat(degree, nationality, pageable);
-
-        if (patients.isEmpty())
-        {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(patients);
-    }
-
 
     @GetMapping("/{id}")
     @ResponseBody
@@ -97,7 +82,7 @@ public class PatientController
             info.setGender(patientModel.getGender());
             info.setDegree_dependence(patientModel.getDegree_dependence());
             info.setObservations(patientModel.getObservations());
-            personService.updatePerson(id, patientModel.getPerson());
+            userService.updatePerson(id, patientModel.getPerson());
 
             PatientModel patient = this.patientRepository.save(info);
             return ResponseEntity.ok(patient);
@@ -113,7 +98,7 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<PatientModel> create(@RequestBody PatientModel patientModel)
     {
-        var savedPerson = personService.createPerson(patientModel.getPerson());
+        var savedPerson = userService.createPerson(patientModel.getPerson());
 
         patientModel.setPerson(savedPerson);
         patientModel.setId(savedPerson.getId());
@@ -127,7 +112,7 @@ public class PatientController
     @ApiResponse(responseCode = "201", description = "Medicine created successfully")
     @ApiResponse(responseCode = "404", description = "Patient not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<MedicineModel> createByPatient(@PathVariable Long id, @RequestBody MedicineModel medicineModel)
+    public ResponseEntity<MedicineModel> createMedicineByPatient(@PathVariable Long id, @RequestBody MedicineModel medicineModel)
     {
         return patientRepository.findById(id).map(patient -> {
             MedicineModel medicine = medicineRepository.save(medicineModel);
@@ -149,12 +134,10 @@ public class PatientController
     @ApiResponse(responseCode = "404", description = "Patient not found")
     @ApiResponse(responseCode = "400", description = "Invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<MonitoringModel> create(@PathVariable Long id, @RequestBody MonitoringModel monitoringModel)
+    public ResponseEntity<MonitoringModel> createMonitoringByPatient(@PathVariable Long id, @RequestBody MonitoringModel monitoringModel)
     {
         return this.patientRepository.findById(id).map(patient -> {
-            monitoringModel.setPatient(patient);
-            MonitoringModel monitoring = this.monitoringRepository.save(monitoringModel);
-            return ResponseEntity.status(HttpStatus.CREATED).body(monitoring);
+            return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createMonitoringByPatient(patient, monitoringModel));
         }).orElse(ResponseEntity.notFound().build());
     }
 
@@ -166,12 +149,8 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Void> delete(@PathVariable Long id)
     {
-        if (!this.patientRepository.existsById(id))
-        {
-            return ResponseEntity.notFound().build();
-        }
+        patientService.delete(id);
 
-        this.patientRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

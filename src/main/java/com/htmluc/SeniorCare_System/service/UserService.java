@@ -30,7 +30,7 @@ public class UserService
     }
 
     @Transactional
-    public UserModel createUser(UserModel user)
+    public UserModel create(UserModel user)
     {
         if (!cpfUtil.isCpfValid(user.getPerson().getCpf()))
         {
@@ -46,7 +46,7 @@ public class UserService
     }
 
     @Transactional
-    public UserModel updateUser(Long id, UserModel user)
+    public UserModel update(Long id, UserModel user)
     {
         UserModel existing = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada"));
 
@@ -65,7 +65,7 @@ public class UserService
     }
 
     @Transactional
-    public void deleteUser(Long id)
+    public void delete(Long id)
     {
         if (!userRepository.existsById(id))
         {
