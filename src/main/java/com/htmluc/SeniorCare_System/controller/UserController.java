@@ -32,12 +32,10 @@ public class UserController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Page<UserModel>> listAll(Pageable pageable)
     {
-        Page<UserModel> users = userRepository.findAll(pageable);
-
+        Page<UserModel> users = userService.listAll(pageable);
         if (users.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-
         return ResponseEntity.ok(users);
     }
 
@@ -69,7 +67,6 @@ public class UserController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.deleteUser(id);
-
         return ResponseEntity.noContent().build();
     }
 }

@@ -8,6 +8,9 @@ import com.htmluc.SeniorCare_System.model.UserModel;
 import com.htmluc.SeniorCare_System.repository.UserRepository;
 import com.htmluc.SeniorCare_System.util.CpfUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,12 @@ public class UserService
 
     @Autowired
     private UserRepository userRepository;
+
+    @Transactional
+    public Page<UserModel> listAll(Pageable pageable)
+    {
+        return userRepository.findAll(pageable);
+    }
 
     @Transactional
     public UserModel createUser(UserModel user)
