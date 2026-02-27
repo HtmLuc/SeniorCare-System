@@ -1,5 +1,6 @@
 package com.htmluc.SeniorCare_System.controller;
 
+import com.htmluc.SeniorCare_System.exception.ResourceNotFoundException;
 import com.htmluc.SeniorCare_System.model.MedicineModel;
 import com.htmluc.SeniorCare_System.model.MonitoringModel;
 import com.htmluc.SeniorCare_System.model.PatientModel;
@@ -28,13 +29,8 @@ public class PatientController
     private PatientRepository patientRepository;
 
     @Autowired
-    private MedicineRepository medicineRepository;
-
-    @Autowired
-    private MonitoringRepository monitoringRepository;
-
-    @Autowired
     private UserService userService;
+
     @Autowired
     private PatientService patientService;
 
@@ -46,8 +42,7 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Page<PatientModel>> listAll(Pageable pageable)
     {
-        Page<PatientModel> patients = patientRepository.findAll(pageable);
-
+        Page<PatientModel> patients = patientService.listAll(pageable);
         if (patients.isEmpty())
         {
             return ResponseEntity.noContent().build();
@@ -76,17 +71,14 @@ public class PatientController
     @ApiResponse(responseCode = "404", description = "Patient not found")
     @ApiResponse(responseCode = "400", description = "Invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<PatientModel> updateById(@PathVariable Long id, @RequestBody PatientModel patientModel)
+    public ResponseEntity<PatientModel> update(@PathVariable Long id, @RequestBody PatientModel patientModel)
     {
-        return this.patientRepository.findById(id).map(info -> {
-            info.setGender(patientModel.getGender());
-            info.setDegree_dependence(patientModel.getDegree_dependence());
-            info.setObservations(patientModel.getObservations());
-            userService.updatePerson(id, patientModel.getPerson());
-
-            PatientModel patient = this.patientRepository.save(info);
-            return ResponseEntity.ok(patient);
-        }).orElse(ResponseEntity.notFound().build());
+        try {
+            PatientModel updatedPatient = patientService.update(id, patientModel);
+            return ResponseEntity.ok(updatedPatient);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
@@ -98,13 +90,7 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<PatientModel> create(@RequestBody PatientModel patientModel)
     {
-        var savedPerson = userService.createPerson(patientModel.getPerson());
-
-        patientModel.setPerson(savedPerson);
-        patientModel.setId(savedPerson.getId());
-        PatientModel patient = patientRepository.save(patientModel);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(patient);
+        return ResponseEntity.status(HttpStatus.CREATED).body(patientService.create(patientModel));
     }
 
     @PostMapping("/{id}/medicines")
@@ -115,16 +101,7 @@ public class PatientController
     public ResponseEntity<MedicineModel> createMedicineByPatient(@PathVariable Long id, @RequestBody MedicineModel medicineModel)
     {
         return patientRepository.findById(id).map(patient -> {
-            MedicineModel medicine = medicineRepository.save(medicineModel);
-
-            if (patient.getMedicines() == null)
-            {
-                patient.setMedicines(new java.util.ArrayList<>());
-            }
-
-            patient.getMedicines().add(medicine);
-            patientRepository.save(patient);
-            return ResponseEntity.status(HttpStatus.CREATED).body(medicine);
+            return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createMedicineByPatient(medicineModel, patient));
         }).orElse(ResponseEntity.notFound().build());
     }
 
