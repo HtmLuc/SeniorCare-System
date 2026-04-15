@@ -2,7 +2,7 @@ package com.htmluc.SeniorCare_System.controller;
 
 import com.htmluc.SeniorCare_System.model.UserModel;
 import com.htmluc.SeniorCare_System.repository.UserRepository;
-import com.htmluc.SeniorCare_System.service.PersonService;
+import com.htmluc.SeniorCare_System.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +23,7 @@ public class UserController
     private UserRepository userRepository;
 
     @Autowired
-    private PersonService personService;
+    private UserService userService;
 
     @GetMapping
     @Operation(summary = "List all users", description = "Retrieves a comprehensive list of all registered users from the database.", deprecated = false)
@@ -32,28 +32,10 @@ public class UserController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Page<UserModel>> listAll(Pageable pageable)
     {
-        Page<UserModel> users = userRepository.findAll(pageable);
-
+        Page<UserModel> users = userService.listAll(pageable);
         if (users.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-
-        return ResponseEntity.ok(users);
-    }
-
-    @GetMapping("/search")
-    @Operation(summary = "Search users by function", description = "Filter users by function with pagination")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of users")
-    @ApiResponse(responseCode = "204", description = "No user found in the database")
-    @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<Page<UserModel>> searchByFunction(@RequestParam String function, Pageable pageable)
-    {
-        Page<UserModel> users = userRepository.findByFunctionCustom(function, pageable);
-
-        if (users.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
         return ResponseEntity.ok(users);
     }
 
@@ -75,13 +57,7 @@ public class UserController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<UserModel> create(@RequestBody @Valid UserModel userModel)
     {
-        var savedPerson = personService.createPerson(userModel.getPerson());
-
-        userModel.setPerson(savedPerson);
-        userModel.setId(savedPerson.getId());
-        UserModel savedUser = userRepository.save(userModel);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(userModel));
     }
 
     @DeleteMapping("/{id}")
@@ -90,12 +66,7 @@ public class UserController
     @ApiResponse(responseCode = "404", description = "User not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if(!this.userRepository.existsById(id))
-        {
-            return ResponseEntity.notFound().build();
-        }
-
-        this.userRepository.deleteById(id);
+        userService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
