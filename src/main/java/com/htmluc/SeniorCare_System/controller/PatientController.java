@@ -4,11 +4,7 @@ import com.htmluc.SeniorCare_System.exception.ResourceNotFoundException;
 import com.htmluc.SeniorCare_System.model.MedicineModel;
 import com.htmluc.SeniorCare_System.model.MonitoringModel;
 import com.htmluc.SeniorCare_System.model.PatientModel;
-import com.htmluc.SeniorCare_System.repository.MedicineRepository;
-import com.htmluc.SeniorCare_System.repository.MonitoringRepository;
-import com.htmluc.SeniorCare_System.repository.PatientRepository;
 import com.htmluc.SeniorCare_System.service.PatientService;
-import com.htmluc.SeniorCare_System.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,17 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/v1/patients")
 @Tag(name = "Patient", description = "Endpoints for managing patient data")
 public class PatientController
 {
-    @Autowired
-    private PatientRepository patientRepository;
-
-    @Autowired
-    private UserService userService;
-
     @Autowired
     private PatientService patientService;
 
@@ -59,7 +49,7 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<PatientModel> getById(@PathVariable Long id)
     {
-        return this.patientRepository.findById(id)
+        return this.patientService.findById(id)
                 .map(patient -> ResponseEntity.ok(patient))
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -100,7 +90,7 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<MedicineModel> createMedicineByPatient(@PathVariable Long id, @RequestBody MedicineModel medicineModel)
     {
-        return patientRepository.findById(id).map(patient -> {
+        return patientService.findById(id).map(patient -> {
             return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createMedicineByPatient(medicineModel, patient));
         }).orElse(ResponseEntity.notFound().build());
     }
@@ -113,7 +103,7 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<MonitoringModel> createMonitoringByPatient(@PathVariable Long id, @RequestBody MonitoringModel monitoringModel)
     {
-        return this.patientRepository.findById(id).map(patient -> {
+        return this.patientService.findById(id).map(patient -> {
             return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createMonitoringByPatient(patient, monitoringModel));
         }).orElse(ResponseEntity.notFound().build());
     }

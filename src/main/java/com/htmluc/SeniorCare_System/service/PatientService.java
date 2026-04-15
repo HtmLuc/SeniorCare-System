@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class PatientService
@@ -35,11 +36,17 @@ public class PatientService
     @Autowired
     private PersonService personService;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<PatientModel> listAll(Pageable pageable)
     {
         Page<PatientModel> patients = patientRepository.findAll(pageable);
         return patients;
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<PatientModel> findById(Long id)
+    {
+        return patientRepository.findById(id);
     }
 
     @Transactional
