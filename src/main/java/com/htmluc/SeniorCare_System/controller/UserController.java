@@ -1,13 +1,12 @@
 package com.htmluc.SeniorCare_System.controller;
 
 import com.htmluc.SeniorCare_System.model.UserModel;
-import com.htmluc.SeniorCare_System.repository.UserRepository;
 import com.htmluc.SeniorCare_System.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -15,14 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v1/users")
 @Tag(name = "User", description = "Endpoints for managing user data")
 public class UserController
 {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private UserService userService;
 
     @GetMapping
@@ -33,8 +29,9 @@ public class UserController
     public ResponseEntity<Page<UserModel>> listAll(Pageable pageable)
     {
         Page<UserModel> users = userService.listAll(pageable);
-        if (users.isEmpty()) {
-            return ResponseEntity.noContent().build();
+        if (users.isEmpty())
+        {
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.ok(users);
     }
@@ -46,7 +43,7 @@ public class UserController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<UserModel> getById(@PathVariable Long id)
     {
-        return userRepository.findById(id).map(user -> ResponseEntity.ok(user)).orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(userService.findById(id));
     }
 
     @PostMapping
@@ -65,7 +62,8 @@ public class UserController
     @ApiResponse(responseCode = "204", description = "User deleted successfully")
     @ApiResponse(responseCode = "404", description = "User not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id)
+    {
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }
