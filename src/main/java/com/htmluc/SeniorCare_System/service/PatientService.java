@@ -58,7 +58,8 @@ public class PatientService
         patientUpdate.setDegree_dependence(patientModel.getDegree_dependence());
         patientUpdate.setObservations(patientModel.getObservations());
 
-        if (patientModel.getPerson() != null) {
+        if (patientModel.getPerson() != null)
+        {
             patientUpdate.setPerson(personService.update(patientModel.getPerson()));
         }
 

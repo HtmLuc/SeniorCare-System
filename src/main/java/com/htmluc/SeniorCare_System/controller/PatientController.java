@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -63,10 +62,11 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<PatientModel> update(@PathVariable Long id, @RequestBody PatientModel patientModel)
     {
-        try {
-            PatientModel updatedPatient = patientService.update(id, patientModel);
-            return ResponseEntity.ok(updatedPatient);
-        } catch (ResourceNotFoundException e) {
+        try
+        {
+            return ResponseEntity.ok(patientService.update(id, patientModel));
+        } catch (ResourceNotFoundException e)
+        {
             return ResponseEntity.notFound().build();
         }
     }
@@ -90,7 +90,8 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<MedicineModel> createMedicineByPatient(@PathVariable Long id, @RequestBody MedicineModel medicineModel)
     {
-        return patientService.findById(id).map(patient -> {
+        return patientService.findById(id).map(patient ->
+        {
             return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createMedicineByPatient(medicineModel, patient));
         }).orElse(ResponseEntity.notFound().build());
     }
@@ -103,7 +104,8 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<MonitoringModel> createMonitoringByPatient(@PathVariable Long id, @RequestBody MonitoringModel monitoringModel)
     {
-        return this.patientService.findById(id).map(patient -> {
+        return this.patientService.findById(id).map(patient ->
+        {
             return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createMonitoringByPatient(patient, monitoringModel));
         }).orElse(ResponseEntity.notFound().build());
     }
