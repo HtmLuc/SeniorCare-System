@@ -28,12 +28,7 @@ public class UserController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Page<UserModel>> listAll(Pageable pageable)
     {
-        Page<UserModel> users = userService.listAll(pageable);
-        if (users.isEmpty())
-        {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(userService.listAll(pageable));
     }
 
     @GetMapping("/{id}")
