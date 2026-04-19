@@ -9,6 +9,7 @@ import com.htmluc.SeniorCare_System.repository.MedicineRepository;
 import com.htmluc.SeniorCare_System.repository.MonitoringRepository;
 import com.htmluc.SeniorCare_System.repository.PatientRepository;
 import com.htmluc.SeniorCare_System.repository.PersonRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,21 +20,13 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class PatientService
 {
-    @Autowired
     private PatientRepository patientRepository;
-
-    @Autowired
     private MonitoringRepository monitoringRepository;
-
-    @Autowired
     private MedicineRepository medicineRepository;
-
-    @Autowired
     private PersonRepository personRepository;
-
-    @Autowired
     private PersonService personService;
 
     @Transactional(readOnly = true)
@@ -52,7 +45,7 @@ public class PatientService
     @Transactional
     public PatientModel update(Long id, PatientModel patientModel)
     {
-        PatientModel patientUpdate = patientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado com ID: " + id));
+        PatientModel patientUpdate = patientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
 
         patientUpdate.setGender(patientModel.getGender());
         patientUpdate.setDegree_dependence(patientModel.getDegree_dependence());
@@ -60,7 +53,7 @@ public class PatientService
 
         if (patientModel.getPerson() != null)
         {
-            patientUpdate.setPerson(personService.update(patientModel.getPerson()));
+            patientUpdate.setPerson(personService.update(id, patientModel.getPerson()));
         }
 
         return patientRepository.save(patientUpdate);
