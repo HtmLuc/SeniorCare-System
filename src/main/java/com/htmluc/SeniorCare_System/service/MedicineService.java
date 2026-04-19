@@ -35,7 +35,7 @@ public class MedicineService
     @Transactional
     public MedicineModel update(Long id, MedicineModel medicineModel)
     {
-        MedicineModel info = medicineRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado medicmanto."));
+        MedicineModel info = medicineRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado medicamento."));
 
         info.setName(medicineModel.getName());
         info.setAcquisition(medicineModel.getAcquisition());
@@ -57,7 +57,7 @@ public class MedicineService
     public void delete(Long id)
     {
         MedicineModel medicine = medicineRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Medicamento não encontrado."));
-        if (medicine.getPatients() != null)
+        if (medicine.getPatients() != null && !medicine.getPatients().isEmpty())
         {
             throw new BusinessException("Existem pacientes associados a este medicamento.");
         }

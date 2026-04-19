@@ -23,9 +23,9 @@ public class MonitoringService
     }
 
     @Transactional(readOnly = true)
-    public Optional<MonitoringModel> findById(Long id)
+    public MonitoringModel findById(Long id)
     {
-        return monitoringRepository.findById(id);
+        return monitoringRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado monitoramento."));
     }
 
     @Transactional

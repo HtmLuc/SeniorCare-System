@@ -22,6 +22,6 @@ public class PersonService
         personUpdate.setEmail(personModel.getEmail());
         personUpdate.setPhoneNumber(personModel.getPhoneNumber());
 
-        return personUpdate;
+        return personRepository.save(personUpdate);
     }
 }

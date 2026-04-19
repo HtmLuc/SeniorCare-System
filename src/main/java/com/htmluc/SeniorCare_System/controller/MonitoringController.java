@@ -41,7 +41,7 @@ public class MonitoringController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<MonitoringModel> getById(@PathVariable Long id)
     {
-        return this.monitoringService.findById(id).map(monitoring -> ResponseEntity.ok(monitoring)).orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(monitoringService.findById(id));
     }
 
     @PutMapping("/{id}")

@@ -19,10 +19,10 @@ public class PatientModel
     @NotBlank
     private String nationality;
 
-    private String degree_dependence;
+    private String degreeDependence;
 
     @NotBlank
-    private String source_income;
+    private String sourceIncome;
 
     private String observations;
 
