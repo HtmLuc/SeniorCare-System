@@ -1,6 +1,7 @@
 package com.htmluc.SeniorCare_System.controller;
 
 import com.htmluc.SeniorCare_System.exception.ResourceNotFoundException;
+import com.htmluc.SeniorCare_System.model.FamilyContactModel;
 import com.htmluc.SeniorCare_System.model.MedicineModel;
 import com.htmluc.SeniorCare_System.model.MonitoringModel;
 import com.htmluc.SeniorCare_System.model.PatientModel;
@@ -46,9 +47,7 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<PatientModel> getById(@PathVariable Long id)
     {
-        return this.patientService.findById(id)
-                .map(patient -> ResponseEntity.ok(patient))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(patientService.findById(id));
     }
 
     @PutMapping("/{id}")

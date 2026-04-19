@@ -23,17 +23,10 @@ public class FamilyContactController
     @GetMapping
     @Operation(summary = "List all family contact", description = "Retrieves a comprehensive list of all registered family contact from the database.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of family contact")
-    @ApiResponse(responseCode = "204", description = "No family contact found in the database")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Page<FamilyContactModel>> listAll(Pageable pageable)
     {
-        Page<FamilyContactModel> contacts = familyContactService.listAll(pageable);
-
-        if (contacts.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(contacts);
+        return ResponseEntity.ok(familyContactService.listAll(pageable));
     }
 
     @GetMapping("/{id}")

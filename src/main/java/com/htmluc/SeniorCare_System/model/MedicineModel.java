@@ -1,5 +1,6 @@
 package com.htmluc.SeniorCare_System.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -31,6 +32,7 @@ public class MedicineModel
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "medicines")
     private List<PatientModel> patients;
 }

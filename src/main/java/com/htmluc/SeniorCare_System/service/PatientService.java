@@ -1,12 +1,8 @@
 package com.htmluc.SeniorCare_System.service;
 
 import com.htmluc.SeniorCare_System.exception.ResourceNotFoundException;
-import com.htmluc.SeniorCare_System.model.MedicineModel;
-import com.htmluc.SeniorCare_System.model.MonitoringModel;
-import com.htmluc.SeniorCare_System.model.PatientModel;
-import com.htmluc.SeniorCare_System.model.PersonModel;
-import com.htmluc.SeniorCare_System.repository.MedicineRepository;
-import com.htmluc.SeniorCare_System.repository.MonitoringRepository;
+import com.htmluc.SeniorCare_System.model.*;
+import com.htmluc.SeniorCare_System.repository.FamilyContactRepository;
 import com.htmluc.SeniorCare_System.repository.PatientRepository;
 import com.htmluc.SeniorCare_System.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -25,18 +21,19 @@ public class PatientService
     private final PatientRepository patientRepository;
     private final PersonRepository personRepository;
     private final PersonService personService;
+    private final MedicineService medicineService;
+    private final FamilyContactRepository familyContactRepository;
 
     @Transactional(readOnly = true)
     public Page<PatientModel> listAll(Pageable pageable)
     {
-        Page<PatientModel> patients = patientRepository.findAll(pageable);
-        return patients;
+        return patientRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
-    public Optional<PatientModel> findById(Long id)
+    public PatientModel findById(Long id)
     {
-        return patientRepository.findById(id);
+        return patientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado."));
     }
 
     @Transactional
@@ -69,11 +66,7 @@ public class PatientService
     public PatientModel createMedicineByPatient(Long id, MedicineModel medicineModel)
     {
         PatientModel patient = patientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado."));
-        if (patient.getMedicines() == null)
-        {
-            patient.setMedicines(new ArrayList<>());
-        }
-        patient.getMedicines().add(medicineModel);
+        patient.getMedicines().add(medicineService.create(medicineModel));
         patientRepository.save(patient);
         return patient;
     }
@@ -82,10 +75,7 @@ public class PatientService
     public PatientModel createMonitoringByPatient(Long id, MonitoringModel monitoringModel)
     {
         PatientModel patient = patientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado."));
-        if (patient.getMonitorings() == null)
-        {
-            patient.setMonitorings(new ArrayList<>());
-        }
+        monitoringModel.setPatient(patient);
         patient.getMonitorings().add(monitoringModel);
         patientRepository.save(patient);
         return patient;

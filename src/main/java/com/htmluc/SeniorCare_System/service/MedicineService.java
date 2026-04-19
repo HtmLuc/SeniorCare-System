@@ -4,7 +4,6 @@ import com.htmluc.SeniorCare_System.exception.BusinessException;
 import com.htmluc.SeniorCare_System.exception.ResourceNotFoundException;
 import com.htmluc.SeniorCare_System.model.MedicineModel;
 import com.htmluc.SeniorCare_System.repository.MedicineRepository;
-import com.htmluc.SeniorCare_System.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MedicineService
 {
-    private final PatientRepository patientRepository;
     private final MedicineRepository medicineRepository;
-    private final PatientService patientService;
 
     @Transactional(readOnly = true)
     public Page<MedicineModel> listAll(Pageable pageable)
