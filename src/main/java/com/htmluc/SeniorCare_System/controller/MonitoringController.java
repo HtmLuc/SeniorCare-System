@@ -1,21 +1,20 @@
 package com.htmluc.SeniorCare_System.controller;
 
-import com.htmluc.SeniorCare_System.exception.ResourceNotFoundException;
 import com.htmluc.SeniorCare_System.model.MonitoringModel;
 import com.htmluc.SeniorCare_System.service.MonitoringService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("v1/monitoring")
 public class MonitoringController
 {
-    @Autowired
     private MonitoringService monitoringService;
 
     @GetMapping
@@ -53,13 +52,7 @@ public class MonitoringController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<MonitoringModel> updateById(@PathVariable Long id, @RequestBody MonitoringModel monitoringModel)
     {
-        try
-        {
-            return ResponseEntity.ok(monitoringService.update(id, monitoringModel));
-        } catch (ResourceNotFoundException e)
-        {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(monitoringService.update(id, monitoringModel));
     }
 
     @DeleteMapping("/{id}")
@@ -69,13 +62,7 @@ public class MonitoringController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Void> delete(@PathVariable Long id)
     {
-        try
-        {
-            monitoringService.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (ResourceNotFoundException e)
-        {
-            return ResponseEntity.notFound().build();
-        }
+        monitoringService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,23 +1,20 @@
 package com.htmluc.SeniorCare_System.service;
 
+import com.htmluc.SeniorCare_System.exception.ResourceNotFoundException;
 import com.htmluc.SeniorCare_System.model.MonitoringModel;
 import com.htmluc.SeniorCare_System.repository.MonitoringRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class MonitoringService
 {
-    private final MonitoringRepository monitoringRepository;
-
-    public MonitoringService(MonitoringRepository monitoringRepository)
-    {
-        this.monitoringRepository = monitoringRepository;
-    }
+    private MonitoringRepository monitoringRepository;
 
     @Transactional(readOnly = true)
     public Page<MonitoringModel> listAll(Pageable pageable)
@@ -34,7 +31,8 @@ public class MonitoringService
     @Transactional
     public MonitoringModel update(Long id, MonitoringModel monitoringModel)
     {
-        MonitoringModel info = monitoringRepository.findById(id).get();
+        MonitoringModel info = monitoringRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado nenhum monitoramento."));
+
         info.setName(monitoringModel.getName());
         info.setBloodSugar(monitoringModel.getBloodSugar());
         info.setBloodPressure(monitoringModel.getBloodPressure());
@@ -49,6 +47,7 @@ public class MonitoringService
     @Transactional
     public void delete(Long id)
     {
+        monitoringRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado nenhum monitoramento."));
         monitoringRepository.deleteById(id);
     }
 }
