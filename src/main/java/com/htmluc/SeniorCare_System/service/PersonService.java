@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PersonService
 {
-    private PersonRepository personRepository;
+    private final PersonRepository personRepository;
 
     @Transactional
     public PersonModel update(Long id, PersonModel personModel)

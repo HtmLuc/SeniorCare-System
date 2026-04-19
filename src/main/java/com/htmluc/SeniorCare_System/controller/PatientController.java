@@ -8,6 +8,7 @@ import com.htmluc.SeniorCare_System.service.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,15 +17,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v1/patients")
 @Tag(name = "Patient", description = "Endpoints for managing patient data")
 public class PatientController
 {
-    @Autowired
-    private PatientService patientService;
+    private final PatientService patientService;
 
     @GetMapping
-    @ResponseBody
     @Operation(summary = "List all patients", description = "Retrieves a comprehensive list of all registered patients from the database.", deprecated = false)
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of patient")
     @ApiResponse(responseCode = "204", description = "No patients found in the database")
@@ -41,7 +41,6 @@ public class PatientController
     }
 
     @GetMapping("/{id}")
-    @ResponseBody
     @Operation(summary = "Get patient by ID", description = "Retrieves a patient by its unique identifier")
     @ApiResponse(responseCode = "200", description = "Patient retrieved successfully")
     @ApiResponse(responseCode = "404", description = "patient not found")
@@ -54,7 +53,6 @@ public class PatientController
     }
 
     @PutMapping("/{id}")
-    @ResponseBody
     @Operation(summary = "Update patient by ID", description = "Updates an existing patient with the provided data")
     @ApiResponse(responseCode = "200", description = "Patient updated successfully")
     @ApiResponse(responseCode = "404", description = "Patient not found")
@@ -62,17 +60,10 @@ public class PatientController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<PatientModel> update(@PathVariable Long id, @RequestBody PatientModel patientModel)
     {
-        try
-        {
-            return ResponseEntity.ok(patientService.update(id, patientModel));
-        } catch (ResourceNotFoundException e)
-        {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(patientService.update(id, patientModel));
     }
 
     @PostMapping
-    @ResponseBody
     @Operation(summary = "Save patient data", description = "Method for saving patient data.", deprecated = false)
     @ApiResponse(responseCode = "201", description = "Patient created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid CPF or data")
@@ -88,30 +79,22 @@ public class PatientController
     @ApiResponse(responseCode = "201", description = "Medicine created successfully")
     @ApiResponse(responseCode = "404", description = "Patient not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<MedicineModel> createMedicineByPatient(@PathVariable Long id, @RequestBody MedicineModel medicineModel)
+    public ResponseEntity<PatientModel> createMedicineByPatient(@PathVariable Long id, @RequestBody MedicineModel medicineModel)
     {
-        return patientService.findById(id).map(patient ->
-        {
-            return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createMedicineByPatient(medicineModel, patient));
-        }).orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createMedicineByPatient(id, medicineModel));
     }
 
     @PostMapping("/{id}/monitoring")
     @Operation(summary = "Create a new monitoring for a patient", description = "Creates a new monitoring record associated with a specific patient")
     @ApiResponse(responseCode = "201", description = "Monitoring created successfully")
     @ApiResponse(responseCode = "404", description = "Patient not found")
-    @ApiResponse(responseCode = "400", description = "Invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<MonitoringModel> createMonitoringByPatient(@PathVariable Long id, @RequestBody MonitoringModel monitoringModel)
+    public ResponseEntity<PatientModel> createMonitoringByPatient(@PathVariable Long id, @RequestBody MonitoringModel monitoringModel)
     {
-        return this.patientService.findById(id).map(patient ->
-        {
-            return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createMonitoringByPatient(patient, monitoringModel));
-        }).orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createMonitoringByPatient(id, monitoringModel));
     }
 
     @DeleteMapping("/{id}")
-    @ResponseBody
     @Operation(summary = "Delete patient data", description = "Method for delete patient data.", deprecated = false)
     @ApiResponse(responseCode = "204", description = "Patient deleted successfully")
     @ApiResponse(responseCode = "404", description = "Patient not found")

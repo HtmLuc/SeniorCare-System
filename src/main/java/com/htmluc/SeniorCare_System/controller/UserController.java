@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "User", description = "Endpoints for managing user data")
 public class UserController
 {
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping
     @Operation(summary = "List all users", description = "Retrieves a comprehensive list of all registered users from the database.", deprecated = false)

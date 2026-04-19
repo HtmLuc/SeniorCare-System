@@ -22,11 +22,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PatientService
 {
-    private PatientRepository patientRepository;
-    private MonitoringRepository monitoringRepository;
-    private MedicineRepository medicineRepository;
-    private PersonRepository personRepository;
-    private PersonService personService;
+    private final PatientRepository patientRepository;
+    private final PersonRepository personRepository;
+    private final PersonService personService;
 
     @Transactional(readOnly = true)
     public Page<PatientModel> listAll(Pageable pageable)
@@ -68,33 +66,35 @@ public class PatientService
     }
 
     @Transactional
-    public MedicineModel createMedicineByPatient(MedicineModel medicineModel, PatientModel patientModel)
+    public PatientModel createMedicineByPatient(Long id, MedicineModel medicineModel)
     {
-        //Validar se o medicamento já existe
-        MedicineModel medicine = medicineRepository.save((medicineModel));
-
-        if (patientModel.getMedicines() == null)
+        PatientModel patient = patientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado."));
+        if (patient.getMedicines() == null)
         {
-            patientModel.setMedicines(new ArrayList<>());
+            patient.setMedicines(new ArrayList<>());
         }
-
-        patientModel.getMedicines().add(medicine);
-        patientRepository.save(patientModel);
-
-        return medicine;
+        patient.getMedicines().add(medicineModel);
+        patientRepository.save(patient);
+        return patient;
     }
 
     @Transactional
-    public MonitoringModel createMonitoringByPatient(PatientModel patient, MonitoringModel monitoringModel)
+    public PatientModel createMonitoringByPatient(Long id, MonitoringModel monitoringModel)
     {
-        monitoringModel.setPatient(patient);
-        return this.monitoringRepository.save(monitoringModel);
+        PatientModel patient = patientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado."));
+        if (patient.getMonitorings() == null)
+        {
+            patient.setMonitorings(new ArrayList<>());
+        }
+        patient.getMonitorings().add(monitoringModel);
+        patientRepository.save(patient);
+        return patient;
     }
 
     @Transactional
     public void delete(Long id)
     {
-        if (!this.patientRepository.existsById(id))
+        if (!patientRepository.existsById(id))
         {
             throw new ResourceNotFoundException("Paciente não encontrada");
         }

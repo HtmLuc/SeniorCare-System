@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService
 {
-    private CpfUtil cpfUtil;
-    private UserRepository userRepository;
+    private final CpfUtil cpfUtil;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public Page<UserModel> listAll(Pageable pageable)

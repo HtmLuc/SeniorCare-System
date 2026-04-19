@@ -14,7 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MonitoringService
 {
-    private MonitoringRepository monitoringRepository;
+    private final MonitoringRepository monitoringRepository;
 
     @Transactional(readOnly = true)
     public Page<MonitoringModel> listAll(Pageable pageable)

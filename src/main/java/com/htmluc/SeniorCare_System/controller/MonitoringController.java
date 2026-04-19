@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("v1/monitoring")
+@RequestMapping("/v1/monitoring")
 public class MonitoringController
 {
-    private MonitoringService monitoringService;
+    private final MonitoringService monitoringService;
 
     @GetMapping
     @Operation(summary = "List all monitoring", description = "Retrieves a comprehensive list of all registered monitoring from the database.")
