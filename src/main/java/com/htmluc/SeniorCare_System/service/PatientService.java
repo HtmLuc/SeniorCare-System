@@ -45,7 +45,7 @@ public class PatientService
         PatientModel patientUpdate = patientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
 
         patientUpdate.setGender(patientModel.getGender());
-        patientUpdate.setDegree_dependence(patientModel.getDegree_dependence());
+        patientUpdate.setDegreeDependence(patientModel.getDegreeDependence());
         patientUpdate.setObservations(patientModel.getObservations());
 
         if (patientModel.getPerson() != null)

@@ -1,29 +1,24 @@
 package com.htmluc.SeniorCare_System.controller;
 
 import com.htmluc.SeniorCare_System.model.FamilyContactModel;
-import com.htmluc.SeniorCare_System.repository.FamilyContactRepository;
-import com.htmluc.SeniorCare_System.service.PersonService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.htmluc.SeniorCare_System.service.FamilyContactService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v1/familyContact")
 @Tag(name = "FamilyContact", description = "Endpoints for managing familyContact data")
 public class FamilyContactController
 {
-    @Autowired
-    private FamilyContactRepository familyContactRepository;
-
-    @Autowired
-    private PersonService personService;
+    private final FamilyContactService familyContactService;
 
     @GetMapping
     @Operation(summary = "List all family contact", description = "Retrieves a comprehensive list of all registered family contact from the database.")
@@ -32,23 +27,7 @@ public class FamilyContactController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Page<FamilyContactModel>> listAll(Pageable pageable)
     {
-        Page<FamilyContactModel> contacts = familyContactRepository.findAll(pageable);
-
-        if (contacts.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(contacts);
-    }
-
-    @GetMapping("/search")
-    @Operation(summary = "Filter family contacts", description = "Filter family contacts by city or relationship")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of family contact")
-    @ApiResponse(responseCode = "204", description = "No family contact found in the database")
-    @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<Page<FamilyContactModel>> search(@RequestParam(required = false) String city, @RequestParam(required = false) String relationship, Pageable pageable)
-    {
-        Page<FamilyContactModel> contacts = familyContactRepository.findByCityOrRelationship(city, relationship, pageable);
+        Page<FamilyContactModel> contacts = familyContactService.listAll(pageable);
 
         if (contacts.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -64,7 +43,7 @@ public class FamilyContactController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<FamilyContactModel> getById(@PathVariable Long id)
     {
-        return this.familyContactRepository.findById(id).map(familyContact -> ResponseEntity.ok(familyContact)).orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(familyContactService.findById(id));
     }
 
     @PutMapping("/{id}")
@@ -73,20 +52,9 @@ public class FamilyContactController
     @ApiResponse(responseCode = "404", description = "Family contact not found")
     @ApiResponse(responseCode = "400", description = "Invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<FamilyContactModel> updateById(@PathVariable Long id, @RequestBody FamilyContactModel familyContactModel)
+    public ResponseEntity<FamilyContactModel> update(@PathVariable Long id, @RequestBody FamilyContactModel familyContactModel)
     {
-        return this.familyContactRepository.findById(id).map(info -> {
-            info.setCep(familyContactModel.getCep());
-            info.setUf(familyContactModel.getUf());
-            info.setCity(familyContactModel.getCity());
-            info.setNeighborhood(familyContactModel.getNeighborhood());
-            info.setHouseNumber(familyContactModel.getHouseNumber());
-            info.setRoad(familyContactModel.getRoad());
-            info.setRelationship(familyContactModel.getRelationship());
-
-            FamilyContactModel familyContact = this.familyContactRepository.save(info);
-            return ResponseEntity.ok(familyContact);
-        }).orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(familyContactService.update(id, familyContactModel));
     }
 
     @PostMapping
@@ -97,14 +65,7 @@ public class FamilyContactController
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<FamilyContactModel> create(@RequestBody FamilyContactModel familyContactModel)
     {
-        var savedPerson = personService.createPerson(familyContactModel.getPerson());
-
-        familyContactModel.setPerson(savedPerson);
-        familyContactModel.setId(savedPerson.getId());
-
-        FamilyContactModel savedContact = familyContactRepository.save(familyContactModel);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedContact);
+        return ResponseEntity.status(HttpStatus.CREATED).body(familyContactService.create(familyContactModel));
     }
 
     @DeleteMapping("/{id}")
@@ -112,13 +73,9 @@ public class FamilyContactController
     @ApiResponse(responseCode = "204", description = "Family contact deleted successfully")
     @ApiResponse(responseCode = "404", description = "Family contact not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    public ResponseEntity<FamilyContactModel> delete(@PathVariable Long id)
+    public ResponseEntity<Void> delete(@PathVariable Long id)
     {
-        if (!this.familyContactRepository.existsById(id))
-        {
-            return ResponseEntity.notFound().build();
-        }
-        this.familyContactRepository.deleteById(id);
+        familyContactService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
